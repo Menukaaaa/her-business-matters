@@ -400,28 +400,6 @@ a {
     /* Gold glow */
 }
 
-/* --- Buttons --- */
-.view-all-container {
-    display: none;
-    /* hidden on desktop */
-}
-
-.view-all-btn {
-    padding: 12px 28px;
-    background-color: var(--color-text-main);
-    color: var(--color-bg-primary);
-    border: none;
-    border-radius: 30px;
-    font-family: var(--font-body);
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color var(--transition-speed);
-}
-
-.view-all-btn:hover {
-    background-color: var(--color-accent-gold);
-}
-
 /* --- Category Sections --- */
 .category-block {
     margin-bottom: 24px;
@@ -701,22 +679,12 @@ a {
         text-align: center;
     }
 
-    .view-all-container {
-        display: flex;
-        justify-content: center;
-        margin-top: 16px;
-    }
-
     .featured-grid {
         width: 100%;
         flex-direction: column;
         align-items: center;
         gap: 24px;
         padding-bottom: 0;
-    }
-
-    .featured-grid.mobile-collapsed .card:not(:first-child) {
-        display: none;
     }
 
     .featured-grid .card {
