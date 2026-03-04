@@ -45,13 +45,14 @@
             <p class="hero-subtitle">Meet the women shaping the future of local business. Explore our curated showcase
                 of Sri Lanka's finest female-led, locally manufactured brands.</p>
         </div>
-        <a href="#featured" class="explore-pill">
-            Explore <i data-feather="chevron-down"></i>
+        <a href="#featured" class="explore-pill" onclick="exploreClick(event)">
+            <span>Explore</span>
+            <i data-feather="chevron-down"></i>
         </a>
     </header>
 
     <main>
-        <section class="featured-section" id="featured">
+        <section class="featured-section reveal-section" id="featured">
             <div class="section-container">
                 <h2 class="section-title text-center" style="display: block; text-align: center;">Featured Brands</h2>
 
@@ -63,7 +64,7 @@
             </div>
         </section>
 
-        <section class="categories-section" id="categories">
+        <section class="categories-section reveal-section" id="categories">
             <div class="section-container">
                 <h2 class="section-title text-center" style="display: block; text-align: center;">Discover More</h2>
                 <div class="categories-container" id="categories-container">

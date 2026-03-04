@@ -116,17 +116,20 @@ a {
 
 /* --- Hero Section --- */
 .hero {
-    min-height: 100vh;
+    min-height: 100dvh;
+    /* Accounts for mobile browser chrome */
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 120px 24px 60px;
+    padding: 100px 24px 120px;
     opacity: 0;
     transform: translateY(30px);
     animation: fadeUp 1s ease-out forwards;
     position: relative;
+    overflow: hidden;
+    /* Keep content clean */
 }
 
 .hero-content {
@@ -158,26 +161,54 @@ a {
 
 .explore-pill {
     position: absolute;
-    bottom: 40px;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
     display: inline-flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, var(--color-accent-gold) 0%, #E6C25B 100%);
-    color: var(--color-bg-primary);
-    padding: 12px 32px;
-    border-radius: 50px;
+    gap: 6px;
+    color: var(--color-accent-gold);
+    font-size: 0.75rem;
     font-weight: 600;
-    font-size: 1rem;
-    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    letter-spacing: 2px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    text-decoration: none;
+    animation: breatheDown 2s infinite ease-in-out;
+    padding: 12px;
 }
 
-.explore-pill:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
-    color: var(--color-bg-primary);
+.explore-pill svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--color-accent-gold);
+    stroke-width: 2.5;
+}
+
+@keyframes breatheDown {
+
+    0%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 0.7;
+    }
+
+    50% {
+        transform: translateX(-50%) translateY(8px);
+        opacity: 1;
+    }
+}
+
+/* --- Scroll Reveal Sections --- */
+.reveal-section {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.reveal-section.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* --- Sections --- */

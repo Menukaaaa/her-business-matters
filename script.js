@@ -376,9 +376,23 @@ function initIntersectionObservers() {
         });
     }, observerOptions);
 
-    // Observe featured cards for immediate load animation if in viewport
+    // Observe all reveal-sections for cinematic scroll-reveal
+    document.querySelectorAll('.reveal-section').forEach(section => {
+        observer.observe(section);
+    });
+
+    // Observe featured cards for staggered load animation
     document.querySelectorAll('.featured-grid .card').forEach((card, index) => {
-        card.style.animationDelay = `${index * 100} ms`;
+        card.style.animationDelay = `${index * 100}ms`;
         observer.observe(card);
     });
 }
+
+// Smooth scroll to featured and help reveal the section
+window.exploreClick = function (e) {
+    e.preventDefault();
+    const target = document.getElementById('featured');
+    if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+};
