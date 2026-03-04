@@ -62,8 +62,10 @@ a {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background-color: var(--color-text-main);
+    /* Black */
+    color: var(--color-bg-primary);
+    /* White */
     z-index: 1000;
     transition: padding var(--transition-speed) var(--transition-timing), box-shadow var(--transition-speed);
     padding: 24px 0;
@@ -398,6 +400,28 @@ a {
     /* Gold glow */
 }
 
+/* --- Buttons --- */
+.view-all-container {
+    display: none;
+    /* hidden on desktop */
+}
+
+.view-all-btn {
+    padding: 12px 28px;
+    background-color: var(--color-text-main);
+    color: var(--color-bg-primary);
+    border: none;
+    border-radius: 30px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+}
+
+.view-all-btn:hover {
+    background-color: var(--color-accent-gold);
+}
+
 /* --- Category Sections --- */
 .category-block {
     margin-bottom: 24px;
@@ -468,7 +492,8 @@ a {
 .footer {
     background-color: var(--color-footer-bg);
     color: var(--color-bg-primary);
-    padding: 60px 24px;
+    padding: 32px 24px;
+    /* Reduced from 60px to eliminate white space */
 }
 
 .footer-container {
@@ -479,7 +504,8 @@ a {
 .footer-divider {
     height: 1px;
     background-color: var(--color-accent-gold);
-    margin-bottom: 40px;
+    margin-bottom: 24px;
+    /* Reduced from 40px */
     opacity: 0.5;
 }
 
@@ -651,6 +677,11 @@ a {
 }
 
 @media (max-width: 768px) {
+    .nav-container {
+        justify-content: center;
+        /* Center the logo */
+    }
+
     .hero-title {
         font-size: clamp(1.5rem, 5vw, 2.5rem);
         /* Prevents overflow if still too long */
@@ -670,18 +701,28 @@ a {
         text-align: center;
     }
 
+    .view-all-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 16px;
+    }
+
     .featured-grid {
-        /* Ensure mobile snap scrolling feels premium for the 5 cards */
-        width: max-content;
-        gap: 16px;
-        scroll-snap-type: x mandatory;
-        padding-bottom: 20px;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        padding-bottom: 0;
+    }
+
+    .featured-grid.mobile-collapsed .card:not(:first-child) {
+        display: none;
     }
 
     .featured-grid .card {
-        width: 280px;
+        width: 100%;
+        max-width: 350px;
         /* Fixed width for swipe-ability on mobile */
-        scroll-snap-align: center;
         flex: 0 0 auto;
         /* Prevent them from shrinking */
     }

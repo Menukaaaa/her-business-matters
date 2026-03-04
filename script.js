@@ -256,6 +256,16 @@ function renderFeatured() {
     });
 
     featuredGrid.innerHTML = html;
+
+    // Handle mobile view all button visibility
+    const viewAllBtn = document.getElementById('mobile-view-all-btn');
+    if (viewAllBtn) {
+        if (featuredList.length > 1) {
+            viewAllBtn.style.display = ''; // Fallback to CSS media query logic
+        } else {
+            viewAllBtn.style.display = 'none'; // Hard hide if only 1 item
+        }
+    }
 }
 
 // Render Categories
@@ -372,3 +382,24 @@ function initIntersectionObservers() {
         observer.observe(card);
     });
 }
+
+window.toggleMobileFeatured = function () {
+    const grid = document.getElementById('featured-grid');
+    const btn = document.getElementById('mobile-view-all-btn');
+
+    if (grid.classList.contains('mobile-collapsed')) {
+        grid.classList.remove('mobile-collapsed');
+        btn.innerText = 'Show Less Brands';
+
+        // Trigger animations for newly revealed cards
+        const cards = grid.querySelectorAll('.card:not(:first-child)');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 50}ms`;
+            card.classList.add('visible');
+        });
+    } else {
+        grid.classList.add('mobile-collapsed');
+        btn.innerText = 'View All 5 Brands';
+        document.getElementById('featured').scrollIntoView({ behavior: 'smooth' });
+    }
+};
