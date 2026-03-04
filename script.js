@@ -164,44 +164,6 @@ function createCardHTML(business) {
     const isSpaCeylon = business.name.toLowerCase() === 'spa ceylon';
     const highlightClass = isSpaCeylon ? 'highlight-spa-ceylon' : '';
 
-    // Process URLs carefully
-    let instagramHTML = '';
-    if (business.instagram) {
-        let username = business.instagram.trim();
-        // Remove @ prefix if exists
-        if (username.startsWith('@')) username = username.substring(1);
-
-        // If they provided a full URL, extract the username part to avoid www issues
-        if (username.includes('instagram.com/')) {
-            let parts = username.split('instagram.com/');
-            username = parts[1].split('/')[0].split('?')[0];
-        } else {
-            // Sometimes domains are just written outright
-            username = username.replace('https://', '').replace('http://', '').replace('www.instagram.com', '').replace('instagram.com', '').replace(/\//g, '');
-        }
-
-        instagramHTML = `<a href="https://instagram.com/${username}" target="_blank" rel="noopener noreferrer" class="social-link"><i data-feather="instagram" width="18" height="18"></i></a>`;
-    }
-
-    let facebookHTML = '';
-    if (business.facebook) {
-        let fbUrl = business.facebook.startsWith('http') ? business.facebook : `https://facebook.com/${business.facebook}`;
-        facebookHTML = `<a href="${fbUrl}" target="_blank" rel="noopener noreferrer" class="social-link"><i data-feather="facebook" width="18" height="18"></i></a>`;
-    }
-
-    let tiktokHTML = '';
-    if (business.tiktok) {
-        let ttUrl = business.tiktok.startsWith('http') ? business.tiktok : `https://tiktok.com/@${business.tiktok.replace('@', '')}`;
-        tiktokHTML = `<a href="${ttUrl}" target="_blank" rel="noopener noreferrer" class="social-link">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-video"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-        </a>`; // Using video icon as fallback for tiktok since feather doesn't have tiktok
-    }
-
-    let websiteHTML = '';
-    if (business.website) {
-        websiteHTML = `<a href="${business.website}" target="_blank" rel="noopener noreferrer" class="social-link"><i data-feather="globe" width="18" height="18"></i></a>`;
-    }
-
     let logoHTML = '';
     if (business.logo) {
         logoHTML = `<div class="card-logo-container"><img src="${business.logo}" alt="${business.name} logo" class="card-logo" loading="lazy" /></div>`;
@@ -210,31 +172,15 @@ function createCardHTML(business) {
         logoHTML = `<div class="card-logo-container"><span class="card-logo-placeholder">${initial}</span></div>`;
     }
 
-    // Unique ID for accordion accessibility
-    const uniqueId = 'desc-' + Math.random().toString(36).substr(2, 9);
+    // Safe encoding to prevent quote issues in HTML onClick attributes
+    const encodedDataId = btoa(encodeURIComponent(business.name));
 
     return `
-        <div class="card ${highlightClass}">
+        <div class="card ${highlightClass}" onclick="openModal('${encodedDataId}')">
             <div class="card-header">
                 ${logoHTML}
             </div>
             <h3 class="card-title" title="${business.name}">${business.name}</h3>
-            
-            <div class="card-description-wrapper" id="${uniqueId}">
-                <div class="card-description-content">
-                    <p class="card-description">${business.description || 'No description available.'}</p>
-                </div>
-            </div>
-            
-            <div class="card-socials">
-                ${instagramHTML}
-                ${facebookHTML}
-                ${tiktokHTML}
-                ${websiteHTML}
-                <button class="info-btn" onclick="toggleDescription(this, '${uniqueId}')" aria-expanded="false" aria-controls="${uniqueId}">
-                    <i data-feather="chevron-down"></i>
-                </button>
-            </div>
         </div>
     `;
 }
@@ -251,8 +197,18 @@ function renderFeatured() {
     }
 
     let html = '';
-    featuredList.forEach(biz => {
-        html += createCardHTML(biz);
+    const hasSeenHint = localStorage.getItem('sawCardHint') === 'true';
+
+    featuredList.forEach((biz, index) => {
+        const isFirst = index === 0;
+        let cardHtml = createCardHTML(biz);
+
+        // Inject the popup hint into the first card if they haven't seen it yet
+        if (isFirst && !hasSeenHint) {
+            cardHtml = cardHtml.replace('<div class="card-header">', '<div class="interaction-hint-popup" id="click-hint">Click me!</div><div class="card-header">');
+        }
+
+        html += cardHtml;
     });
 
     featuredGrid.innerHTML = html;
@@ -314,21 +270,75 @@ function createCategoryBlock(title, items) {
 }
 
 // Interactions
-window.toggleDescription = function (btn, wrapperId) {
-    const wrapper = document.getElementById(wrapperId);
-    event.stopPropagation(); // prevent bubbling if needed
+window.openModal = function (encodedId) {
+    const rawName = decodeURIComponent(atob(encodedId));
+    const business = rawData.find(b => b.name === rawName);
+    if (!business) return;
 
-    const isExpanded = btn.getAttribute('aria-expanded') === 'true';
-
-    if (isExpanded) {
-        wrapper.classList.remove('open');
-        btn.classList.remove('active');
-        btn.setAttribute('aria-expanded', 'false');
-    } else {
-        wrapper.classList.add('open');
-        btn.classList.add('active');
-        btn.setAttribute('aria-expanded', 'true');
+    // Dismiss the hint and save to local storage forever
+    const hint = document.getElementById('click-hint');
+    if (hint) {
+        hint.style.opacity = '0';
+        setTimeout(() => hint.remove(), 500);
     }
+    localStorage.setItem('sawCardHint', 'true');
+
+    const modalOverlay = document.getElementById('business-modal');
+    const modalBody = document.getElementById('modal-body-content');
+
+    // Build Socials matching the previous layout
+    let socialsHTML = '';
+    if (business.instagram) {
+        let username = business.instagram.trim();
+        if (username.startsWith('@')) username = username.substring(1);
+        if (username.includes('instagram.com/')) {
+            username = username.split('instagram.com/')[1].split('/')[0].split('?')[0];
+        } else {
+            username = username.replace('https://', '').replace('http://', '').replace('www.instagram.com', '').replace('instagram.com', '').replace(/\\/ / g, '');
+        }
+        socialsHTML += `<a href="https://instagram.com/${username}" target="_blank" rel="noopener noreferrer" class="social-link"><i data-feather="instagram" width="24" height="24"></i></a>`;
+    }
+    if (business.facebook) {
+        let fbUrl = business.facebook.startsWith('http') ? business.facebook : `https://facebook.com/${business.facebook}`;
+        socialsHTML += `<a href="${fbUrl}" target="_blank" rel="noopener noreferrer" class="social-link"><i data-feather="facebook" width="24" height="24"></i></a>`;
+    }
+    if (business.tiktok) {
+        let ttUrl = business.tiktok.startsWith('http') ? business.tiktok : `https://tiktok.com/@${business.tiktok.replace('@', '')}`;
+        socialsHTML += `<a href="${ttUrl}" target="_blank" rel="noopener noreferrer" class="social-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-video"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+        </a>`;
+    }
+    if (business.website) {
+        socialsHTML += `<a href="${business.website}" target="_blank" rel="noopener noreferrer" class="social-link"><i data-feather="globe" width="24" height="24"></i></a>`;
+    }
+
+    // Inject the content into the overlay
+    modalBody.innerHTML = `
+        <div class="modal-body">
+            ${business.logo ? `<img src="${business.logo}" alt="${business.name} Logo" class="modal-logo" onerror="this.src='header-logo-new3.png'">` : `<img src="header-logo-new3.png" alt="Fallback Logo" class="modal-logo" style="filter: brightness(0) invert(1);">`}
+            <h2 class="modal-title">${business.name}</h2>
+            <p class="modal-description">${business.description || 'Explore our exclusive offerings and story. Join us in celebrating her vision!'}</p>
+            <div class="modal-socials">
+                ${socialsHTML}
+            </div>
+        </div>
+    `;
+
+    feather.replace(); // Re-initialize icons inside the new modal
+    modalOverlay.classList.add('active'); // Pop it up smoothly
+    document.body.style.overflow = 'hidden'; // Stop background scrolling
+};
+
+window.closeModal = function (event) {
+    // Only close if we clicked the pure background overlay or the explicitly passed event from the close button
+    if (event && event.type === 'click') {
+        if (!event.target.classList.contains('modal-overlay')) {
+            return; // Ignore clicks inside the modal content box
+        }
+    }
+
+    document.getElementById('business-modal').classList.remove('active');
+    document.body.style.overflow = ''; // Restore scrolling
 };
 
 window.toggleCategory = function (headerElem) {
@@ -343,7 +353,7 @@ window.toggleCategory = function (headerElem) {
         // trigger staggered fade animation for cards inside
         const cards = wrapper.querySelectorAll('.card');
         cards.forEach((card, index) => {
-            card.style.animationDelay = `${index * 50}ms`;
+            card.style.animationDelay = `${index * 50} ms`;
             card.classList.add('visible');
         });
     }
@@ -368,7 +378,7 @@ function initIntersectionObservers() {
 
     // Observe featured cards for immediate load animation if in viewport
     document.querySelectorAll('.featured-grid .card').forEach((card, index) => {
-        card.style.animationDelay = `${index * 100}ms`;
+        card.style.animationDelay = `${index * 100} ms`;
         observer.observe(card);
     });
 }

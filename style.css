@@ -62,8 +62,10 @@ a {
     position: fixed;
     top: 0;
     width: 100%;
-    background-color: var(--color-text-main);
-    /* Black */
+    /* Elegant glassy light pink/gray gradient (darkened for text visibility) */
+    background: linear-gradient(135deg, rgba(230, 140, 160, 0.8) 0%, rgba(180, 160, 180, 0.75) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: var(--color-bg-primary);
     /* White */
     z-index: 1000;
@@ -85,11 +87,16 @@ a {
     align-items: center;
 }
 
-.logo {
-    font-family: var(--font-heading);
-    font-size: 1.25rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
+.header-logo-img {
+    height: 40px;
+    /* Adjust height to fit cleanly in navbar */
+    width: auto;
+    /* Removed filter so the original colors of the new logo show properly */
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
 }
 
 .nav-links {
@@ -109,8 +116,9 @@ a {
 
 /* --- Hero Section --- */
 .hero {
-    min-height: 70vh;
+    min-height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
@@ -118,6 +126,7 @@ a {
     opacity: 0;
     transform: translateY(30px);
     animation: fadeUp 1s ease-out forwards;
+    position: relative;
 }
 
 .hero-content {
@@ -128,15 +137,13 @@ a {
 }
 
 .hero-title {
-    font-size: clamp(1.8rem, 4vw, 4.5rem);
-    line-height: 1.1;
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    line-height: 1.15;
     margin-bottom: 24px;
-    white-space: nowrap;
-    /* Force single line */
 }
 
 .hero-underline {
-    width: 60px;
+    width: 150px;
     height: 3px;
     background-color: var(--color-accent-gold);
     margin-bottom: 32px;
@@ -147,6 +154,30 @@ a {
     color: var(--color-text-muted);
     font-weight: 300;
     max-width: 600px;
+}
+
+.explore-pill {
+    position: absolute;
+    bottom: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--color-accent-gold) 0%, #E6C25B 100%);
+    color: var(--color-bg-primary);
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.explore-pill:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+    color: var(--color-bg-primary);
 }
 
 /* --- Sections --- */
@@ -173,9 +204,62 @@ a {
     display: inline-block;
 }
 
+/* --- Popup Tooltip Hint --- */
+.interaction-hint-popup {
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--color-accent-gold) 0%, #E6C25B 100%);
+    color: var(--color-bg-primary);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    z-index: 10;
+    pointer-events: none;
+    opacity: 1;
+    animation: bounceTooltip 2s infinite;
+    transition: opacity 0.5s ease;
+}
+
+/* Little triangle pointing down */
+.interaction-hint-popup::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0;
+    border-style: solid;
+    border-color: #E6C25B transparent transparent transparent;
+}
+
+@keyframes bounceTooltip {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+
+    60% {
+        transform: translateX(-50%) translateY(-5px);
+    }
+}
+
 /* --- Featured Section --- */
 .featured-section {
-    background-color: var(--color-bg-secondary);
+    background-color: rgba(212, 175, 55, 0.12);
+    /* Light gold instead of pink */
 }
 
 .featured-scroll-container {
@@ -196,7 +280,8 @@ a {
     display: flex;
     gap: 20px;
     /* Balanced gap for desktop */
-    padding: 10px;
+    padding: 50px 10px 10px 10px;
+    /* Added ample top padding so popup doesn't clip */
     width: 100%;
     /* Stretch completely */
     margin: 0 auto;
@@ -214,11 +299,16 @@ a {
 
 /* --- Cards --- */
 .card {
-    background: var(--color-bg-primary);
+    background: #151515;
+    /* Solid Dark Gray */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #FFFFFF;
+    /* White text */
     border-radius: var(--radius-card);
     padding: 24px;
     /* Tighter padding */
     width: clamp(240px, 18vw, 320px);
+    /* Removed fixed height to eliminate whitespace */
     /* Fluid width: fits 5 on big screens, scales down nicely */
     max-width: 85vw;
     /* Ensure it never overblows on tiny phones */
@@ -229,15 +319,24 @@ a {
     position: relative;
     opacity: 0;
     transform: translateY(20px);
+    cursor: pointer;
+    /* Indicate it's clickable for the modal */
 }
 
 .card.visible {
     animation: fadeUpCard 0.6s ease-out forwards;
 }
 
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-hover);
+@media (hover: hover) {
+    .card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-hover);
+    }
+}
+
+.card:active {
+    transform: scale(0.98);
+    background: #111111;
 }
 
 .card-header {
@@ -254,11 +353,12 @@ a {
     height: 80px;
     border-radius: 50%;
     overflow: hidden;
-    background-color: #f5f5f5;
+    background-color: #ffffff;
+    /* Keep white for logo contrast */
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .card-logo {
@@ -274,139 +374,166 @@ a {
     color: var(--color-text-muted);
 }
 
-.info-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--color-text-muted);
-    transition: color 0.2s, transform 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    position: absolute;
-    /* Take out of flow to not disturb social centering */
-    right: 24px;
-    /* Align with card's internal padding */
-}
-
-.info-btn:hover {
-    color: var(--color-accent-gold);
-}
-
-.info-btn.active {
-    color: var(--color-accent-gold);
-    transform: rotate(180deg);
-}
-
 .card-title {
     font-size: 1.25rem;
-    margin-bottom: 8px;
+    margin-bottom: 0;
     font-family: var(--font-heading);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
     text-align: center;
-    /* Center the title */
+    margin-top: 16px;
 }
 
-/* Accordion Description */
-.card-description-wrapper {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows var(--transition-speed) var(--transition-timing);
-}
-
-.card-description-wrapper.open {
-    grid-template-rows: 1fr;
-}
-
-.card-description-content {
-    overflow: hidden;
-    opacity: 0;
-    transition: opacity var(--transition-speed) var(--transition-timing), transform var(--transition-speed) var(--transition-timing);
-    transform: translateY(10px);
-}
-
-.card-description-wrapper.open .card-description-content {
-    opacity: 1;
-    transform: translateY(0);
-    padding-top: 16px;
-    padding-bottom: 16px;
-}
-
-.card-description {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-    line-height: 1.5;
-    text-align: center;
-    /* Center descriptions */
-}
-
-/* Socials */
-.card-socials {
+/* --- Modal Overlay --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 2000;
     display: flex;
     justify-content: center;
-    /* Perfectly center social icons */
     align-items: center;
-    gap: 12px;
-    margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    padding: 24px;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: linear-gradient(145deg, #2a2a2a 0%, #151515 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-card);
+    padding: 32px;
     width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
     position: relative;
-    /* Anchor the absolute info button inside this bar */
+    color: #FFF;
+    transform: scale(0.95) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #FFF;
+    width: 44px;
+    /* Minimum 44x44 for touch */
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+@media (hover: hover) {
+    .modal-close-btn:hover {
+        background: var(--color-accent-gold);
+        transform: rotate(90deg);
+    }
+}
+
+.modal-close-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(0.9);
+}
+
+.modal-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.modal-logo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: contain;
+    background: #FFF;
+    padding: 8px;
+    margin-bottom: 24px;
+    border: 2px solid var(--color-accent-gold);
+}
+
+.modal-title {
+    font-family: var(--font-heading);
+    font-size: 1.8rem;
+    margin-bottom: 12px;
+    color: #FFF;
+}
+
+.modal-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #CCCCCC;
+    margin-bottom: 24px;
+}
+
+.modal-socials {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
 }
 
 .social-link {
     color: var(--color-accent-gold);
     /* Make them gold by default */
     transition: color 0.2s, transform 0.2s;
-}
-
-.social-link:hover {
-    color: var(--color-text-main);
-    transform: translateY(-2px);
-}
-
-/* Spa Ceylon Highlight */
-.card.highlight-spa-ceylon {
-    background-color: var(--color-text-main);
-    color: var(--color-bg-primary);
-    border: 1px solid var(--color-accent-gold);
-}
-
-.card.highlight-spa-ceylon .card-title,
-.card.highlight-spa-ceylon .card-description {
-    color: var(--color-accent-gold);
+    padding: 10px;
+    margin: -10px;
 }
 
 .card.highlight-spa-ceylon .social-link {
     color: var(--color-accent-gold);
 }
 
-.card.highlight-spa-ceylon .social-link:hover {
-    color: #FFF;
-}
+@media (hover: hover) {
+    .social-link:hover {
+        color: var(--color-text-main);
+        transform: translateY(-2px);
+    }
 
-.card.highlight-spa-ceylon .info-btn {
-    color: var(--color-accent-gold);
-}
+    .card.highlight-spa-ceylon .social-link:hover {
+        color: #FFF;
+    }
 
-.card.highlight-spa-ceylon:hover {
-    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.2);
-    /* Gold glow */
+    .card.highlight-spa-ceylon:hover {
+        box-shadow: 0 12px 30px rgba(212, 175, 55, 0.2);
+        /* Gold glow */
+    }
 }
 
 /* --- Category Sections --- */
 .category-block {
     margin-bottom: 24px;
     border-radius: var(--radius-card);
-    background: var(--color-bg-primary);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    background: linear-gradient(145deg, #2a2a2a 0%, #151515 100%);
+    /* Matching Dark Gray Gradient */
+    border: 1px solid rgba(255, 255, 255, 0.1);
     overflow: hidden;
 }
 
@@ -416,12 +543,22 @@ a {
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
-    background-color: #FAFAFA;
+    background-color: transparent;
+    /* Let the block gradient show through */
+    color: var(--color-bg-primary);
+    /* White text */
     transition: background-color var(--transition-speed);
 }
 
-.category-header:hover {
-    background-color: var(--color-bg-secondary);
+@media (hover: hover) {
+    .category-header:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        /* Subtle highlight on hover */
+    }
+}
+
+.category-header:active {
+    background-color: rgba(255, 255, 255, 0.02);
 }
 
 .category-title {
@@ -432,6 +569,8 @@ a {
 
 .category-icon {
     transition: transform var(--transition-speed);
+    padding: 12px;
+    margin: -12px;
 }
 
 .category-header.active .category-icon {
@@ -441,7 +580,8 @@ a {
 .category-content-wrapper {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 350ms var(--transition-timing);
+    transition: grid-template-rows 350ms ease-in-out;
+    /* Smooth slide down */
 }
 
 .category-content-wrapper.open {
@@ -457,7 +597,11 @@ a {
     grid-template-columns: repeat(3, 1fr);
     gap: 32px;
     padding: 32px;
-    background-color: var(--color-bg-primary);
+    background: rgba(255, 255, 255, 0.15);
+    /* Light, white transparent glass */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    /* Light glassy background so dark cards stick out more */
     align-items: start;
     /* Prevent row height expansion */
 }
@@ -466,76 +610,7 @@ a {
     width: 100%;
 }
 
-/* --- Footer --- */
-.footer {
-    background-color: var(--color-footer-bg);
-    color: var(--color-bg-primary);
-    padding: 32px 24px;
-    /* Reduced from 60px to eliminate white space */
-}
 
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.footer-divider {
-    height: 1px;
-    background-color: var(--color-accent-gold);
-    margin-bottom: 24px;
-    /* Reduced from 40px */
-    opacity: 0.5;
-}
-
-.footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.footer-logo {
-    font-family: var(--font-heading);
-    font-size: 1.5rem;
-    color: var(--color-bg-primary);
-}
-
-.footer-credits {
-    color: var(--color-accent-pink);
-    font-size: 0.9rem;
-}
-
-/* --- Floating Logo --- */
-.floating-logo-container {
-    position: fixed;
-    bottom: 24px;
-    left: 24px;
-    z-index: 1000;
-    pointer-events: none;
-    /* Let clicks pass through if overlapping something */
-}
-
-.floating-logo {
-    width: 104px;
-    /* 30% larger version */
-    height: auto;
-    opacity: 1;
-    /* Fully visible */
-    transition: opacity 0.3s ease;
-}
-
-@media (max-width: 768px) {
-    .floating-logo-container {
-        bottom: 16px;
-        left: 16px;
-    }
-
-    .floating-logo {
-        width: 78px;
-        /* Larger on mobile too */
-    }
-}
 
 /* --- Background Animations --- */
 .bg-animation {
@@ -551,45 +626,59 @@ a {
 
 .bg-animation .shape {
     position: absolute;
-    filter: blur(90px);
+    filter: blur(80px);
+    /* Slightly less blur for stronger color impact */
     border-radius: 50%;
-    opacity: 0.5;
+    opacity: 0.8;
+    /* Significantly increased base opacity */
 }
 
 .shape-1 {
-    width: 50vw;
-    height: 50vw;
-    max-width: 600px;
-    max-height: 600px;
-    background: rgba(255, 182, 193, 0.4);
-    /* Soft Pink */
+    width: 55vw;
+    height: 55vw;
+    max-width: 700px;
+    max-height: 700px;
+    background: rgba(255, 182, 193, 0.6);
+    /* Soft Pink (Stronger) */
     top: -10%;
     left: -10%;
     animation: drift1 11s infinite alternate ease-in-out;
 }
 
 .shape-2 {
-    width: 60vw;
-    height: 60vw;
-    max-width: 700px;
-    max-height: 700px;
-    background: rgba(212, 175, 55, 0.2);
-    /* Soft Gold */
+    width: 65vw;
+    height: 65vw;
+    max-width: 800px;
+    max-height: 800px;
+    background: rgba(212, 175, 55, 0.4);
+    /* Soft Gold (Stronger) */
     bottom: -20%;
     right: -10%;
     animation: drift2 13.75s infinite alternate ease-in-out;
 }
 
 .shape-3 {
-    width: 40vw;
-    height: 40vw;
-    max-width: 500px;
-    max-height: 500px;
-    background: rgba(255, 245, 247, 0.8);
-    /* Blush Pink */
+    width: 45vw;
+    height: 45vw;
+    max-width: 600px;
+    max-height: 600px;
+    background: rgba(255, 245, 247, 0.9);
+    /* Blush Pink (Stronger) */
     top: 30%;
     left: 40%;
     animation: drift3 12.1s infinite alternate ease-in-out;
+}
+
+.shape-4 {
+    width: 50vw;
+    height: 50vw;
+    max-width: 650px;
+    max-height: 650px;
+    background: rgba(255, 182, 193, 0.6);
+    /* Soft Pink (Right side balance - Stronger) */
+    top: 40%;
+    right: -10%;
+    animation: drift4 14s infinite alternate ease-in-out;
 }
 
 @keyframes drift1 {
@@ -619,6 +708,16 @@ a {
 
     100% {
         transform: translate(-5%, 5%) scale(1.05);
+    }
+}
+
+@keyframes drift4 {
+    0% {
+        transform: translate(0, 0) scale(1.05);
+    }
+
+    100% {
+        transform: translate(-5%, -5%) scale(1);
     }
 }
 
@@ -655,18 +754,46 @@ a {
 }
 
 @media (max-width: 768px) {
+    .section-container {
+        padding: 50px 16px;
+    }
+
+    .hero {
+        padding: 100px 16px 50px;
+    }
+
     .nav-container {
         justify-content: center;
         /* Center the logo */
+        padding: 0 16px;
+    }
+
+    .header-logo-img {
+        height: 36px;
+        /* Compact logo for sticky mobile nav */
     }
 
     .hero-title {
-        font-size: clamp(1.5rem, 5vw, 2.5rem);
-        /* Prevents overflow if still too long */
+        font-size: clamp(2rem, 8vw, 3rem);
+        /* Scales down to avoid overflow */
+        white-space: normal;
+    }
+
+    .card {
+        padding: 20px 16px;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+    }
+
+    .modal-description {
+        font-size: 0.95rem;
     }
 
     .category-grid {
         grid-template-columns: 1fr;
+        padding: 24px 16px;
     }
 
     .nav-links {
@@ -679,19 +806,35 @@ a {
         text-align: center;
     }
 
+    .footer-logo-text {
+        display: none;
+        /* Hide text on mobile */
+    }
+
+    .footer-logo-img {
+        display: block;
+        /* Show image on mobile */
+        width: 120px;
+        height: auto;
+        margin: 0 auto;
+    }
+
+    .floating-logo-container {
+        display: none;
+        /* Hide floating corner logo on mobile entirely */
+    }
+
     .featured-grid {
         width: 100%;
         flex-direction: column;
-        align-items: center;
-        gap: 24px;
-        padding-bottom: 0;
+        align-items: stretch;
+        gap: 20px;
+        padding-bottom: 0px;
     }
 
     .featured-grid .card {
         width: 100%;
-        max-width: 350px;
-        /* Fixed width for swipe-ability on mobile */
-        flex: 0 0 auto;
-        /* Prevent them from shrinking */
+        max-width: none;
+        flex: 1 1 auto;
     }
 }

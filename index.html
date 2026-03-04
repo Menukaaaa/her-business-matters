@@ -22,11 +22,15 @@
         <div class="shape shape-1"></div>
         <div class="shape shape-2"></div>
         <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
     </div>
 
     <nav class="navbar" id="navbar">
         <div class="nav-container">
-            <div class="logo">#Her Business Matters</div>
+            <a href="#" class="logo-link">
+                <img src="header-logo-new3.png" alt="Her Business Matters Logo" class="header-logo-img"
+                    style="height: 48px; object-fit: contain;" loading="eager">
+            </a>
             <div class="nav-links">
                 <a href="#featured">Featured</a>
                 <a href="#categories">Discover More</a>
@@ -41,12 +45,16 @@
             <p class="hero-subtitle">Meet the women shaping the future of local business. Explore our curated showcase
                 of Sri Lanka's finest female-led, locally manufactured brands.</p>
         </div>
+        <a href="#featured" class="explore-pill">
+            Explore <i data-feather="chevron-down"></i>
+        </a>
     </header>
 
     <main>
         <section class="featured-section" id="featured">
             <div class="section-container">
                 <h2 class="section-title text-center" style="display: block; text-align: center;">Featured Brands</h2>
+
                 <div class="featured-scroll-container">
                     <div class="featured-grid" id="featured-grid">
                         <!-- Featured cards will be injected here via JS -->
@@ -69,21 +77,19 @@
         </section>
     </main>
 
-    <div class="floating-logo-container">
-        <img src="spa-ceylon-logo.png" alt="Her Business Matters" class="floating-logo" loading="lazy">
-    </div>
 
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-divider"></div>
-            <div class="footer-content">
-                <p class="footer-logo">#Her Business Matters</p>
-                <p class="footer-credits">Empowering female-led businesses in Sri Lanka.</p>
-            </div>
-        </div>
-    </footer>
 
     <!-- Feather Icons for UI elements -->
+    <!-- Modal Overlay -->
+    <div id="business-modal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeModal()"><i data-feather="x"></i></button>
+            <div id="modal-body-content">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="script.js"></script>
 </body>
