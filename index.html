@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Her Business Matters - Sri Lanka's Finest Female-Led Brands</title>
+    <meta name="description"
+        content="Explore our curated showcase of Sri Lanka's finest female-led, locally manufactured brands.">
+    <!-- Google Fonts: Cinzel (Luxury Serif for Titles) and Inter (Sans-serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Full Page Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo-link">
+                <img src="header-logo-new3.png" alt="Her Business Matters Logo" class="header-logo-img"
+                    style="height: 48px; object-fit: contain;" loading="eager">
+            </a>
+            <div class="hamburger-menu" id="hamburger-menu">
+                <i data-feather="menu"></i>
+            </div>
+            <div class="nav-links" id="nav-links">
+                <a href="#details" class="nav-link">Details</a>
+                <a href="#agenda" class="nav-link">Agenda</a>
+                <a href="#speakers" class="nav-link">Speakers</a>
+                <a href="#featured" class="nav-link">Exhibitors</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Celebrating Her Vision</h1>
+            <div class="hero-underline"></div>
+            <p class="hero-subtitle" id="hero-quote"></p>
+
+            <div class="hero-actions">
+                <a href="#details" class="primary-btn gold-btn" onclick="exploreClick(event, 'details')">
+                    Explore Event
+                </a>
+                <a href="#featured" class="primary-btn outline-btn" onclick="exploreClick(event, 'featured')">
+                    Discover Brands
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Dynamic Event Details Section -->
+        <section class="details-section reveal-section" id="details">
+            <div class="section-container">
+                <div class="details-card" id="details-card">
+                    <!-- Event details injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Agenda Section -->
+        <section class="agenda-section reveal-section" id="agenda">
+            <div class="section-container">
+                <h2 class="section-title text-center" style="display: block; text-align: center;">Event Agenda</h2>
+                <div class="agenda-timeline" id="agenda-container">
+                    <!-- Agenda items injected here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Speakers Section -->
+        <section class="speakers-section reveal-section" id="speakers">
+            <div class="section-container">
+                <h2 class="section-title text-center" style="display: block; text-align: center;">Key Speakers &
+                    Partners</h2>
+                <div class="speakers-carousel" id="speakers-container">
+                    <!-- Speakers injected here -->
+                </div>
+            </div>
+        </section>
+
+        <section class="featured-section reveal-section" id="featured">
+            <div class="section-container">
+                <h2 class="section-title text-center" style="display: block; text-align: center;">Featured Brands</h2>
+
+                <div class="featured-scroll-container">
+                    <div class="featured-grid" id="featured-grid">
+                        <!-- Featured cards will be injected here via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="categories-section reveal-section" id="categories">
+            <div class="section-container">
+                <h2 class="section-title text-center" style="display: block; text-align: center;">Discover Businesses
+                </h2>
+                <div class="categories-container" id="categories-container">
+                    <!-- Categories will be injected here via JS -->
+                </div>
+
+                <div class="categories-container" id="other-category-container">
+                    <!-- Other category will be injected here via JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+
+    <!-- Feather Icons for UI elements -->
+    <!-- Modal Overlay -->
+    <div id="business-modal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close-btn" onclick="closeModal()"><i data-feather="x"></i></button>
+            <div id="modal-body-content">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
