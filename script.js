@@ -515,12 +515,30 @@ window.closeModal = function (event) {
     document.body.style.overflow = ''; // Restore scrolling
 };
 
-// Add explicit touchstart listener for iOS/Mobile Safari click-outside
+// Add explicit listeners for Mobile UI
 document.addEventListener('DOMContentLoaded', () => {
-    // ... existing init logic
+    // Modal iOS dismiss
     const modalOverlay = document.getElementById('business-modal');
     if (modalOverlay) {
         modalOverlay.addEventListener('touchstart', window.closeModal, { passive: true });
+    }
+
+    // Hamburger Menu Logic
+    const hamburger = document.getElementById('hamburger-menu');
+    const navLinks = document.getElementById('nav-links');
+
+    if (hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Auto-close menu when a link is tapped
+        const links = navLinks.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
     }
 });
 
