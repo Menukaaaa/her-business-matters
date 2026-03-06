@@ -893,12 +893,11 @@ a {
     font-size: 1.25rem;
     margin-bottom: 0;
     font-family: var(--font-heading);
-    white-space: nowrap;
     overflow: hidden;
-    text-overflow: ellipsis;
     width: 100%;
     text-align: center;
     margin-top: 16px;
+    line-height: 1.3;
 }
 
 /* --- Modal Overlay --- */
