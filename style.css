@@ -351,8 +351,9 @@ img[alt="LuvEsence"]:active {
 
 @media (max-width: 768px) {
 
-    /* BIG BOLD MOBILE PILL - prominent hero element */
+    /* BIG BOLD MOBILE PILL - fixed to viewport so it's always in frame */
     .hero-partners {
+        position: fixed !important;
         flex-direction: column !important;
         width: 90vw !important;
         max-width: 400px;
@@ -360,10 +361,11 @@ img[alt="LuvEsence"]:active {
         border-radius: 24px;
         left: 50%;
         transform: translateX(-50%);
-        bottom: 16px;
+        bottom: 20px;
         gap: 0 !important;
         align-items: center;
         text-align: center;
+        z-index: 100;
     }
 
     .partners-overline {
@@ -377,7 +379,6 @@ img[alt="LuvEsence"]:active {
     }
 
     .partners-logo-strip {
-        display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         justify-content: center;
@@ -392,7 +393,8 @@ img[alt="LuvEsence"]:active {
     }
 
     img[alt="Spa Ceylon"] {
-        height: 36px !important;
+        height: 45px !important;
+        /* 36px × 1.25 = 45px */
         margin-left: 0 !important;
     }
 }
@@ -936,7 +938,8 @@ img[alt="LuvEsence"]:active {
 /* Hidden scrollbars on normal elements, momentum scrolling */
 .featured-scroll-container {
     width: 100%;
-    overflow-x: auto;
+    /* overflow-x intentionally NOT set here at desktop so the popup can float above without clipping */
+    overflow: visible;
     padding-bottom: 32px;
     /* Space for shadow */
     /* Hide scrollbar for cleaner look but keep functionality */
@@ -1571,10 +1574,7 @@ img[alt="LuvEsence"]:active {
         padding: 24px 16px;
     }
 
-    .nav-links {
-        display: none;
-        /* simple mobile nav: just logo */
-    }
+    /* .nav-links shows/hides via max-height animation on hamburger toggle - see lines 188-211 for the dropdown CSS */
 
     .footer-content {
         flex-direction: column;
@@ -1621,6 +1621,11 @@ img[alt="LuvEsence"]:active {
     .categories-section {
         contain: content;
         /* Isolate GPU repaints */
+    }
+
+    /* Re-enable overflow-x scroll on the featured container for mobile carousel */
+    .featured-scroll-container {
+        overflow-x: auto;
     }
 
     /* PERFORMANCE NUKES - remove all heavy painting on mobile */
