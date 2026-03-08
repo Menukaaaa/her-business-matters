@@ -324,7 +324,7 @@ a {
     object-fit: contain;
     filter: brightness(0) opacity(1);
     /* Unified SOLID black by default */
-    transition: all 400ms ease;
+    transition: filter 400ms ease, transform 400ms ease, opacity 400ms ease;
     cursor: pointer;
 }
 
@@ -351,42 +351,40 @@ img[alt="LuvEsence"]:active {
 /* For white logo overrides on light backgrounds, unused here due to black ribbon approach */
 
 @media (max-width: 768px) {
+
+    /* Restore horizontal pill — logos side by side */
     .hero-partners {
-        display: flex;
-        flex-direction: column !important;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
+        flex-direction: row;
+        padding: 12px 20px;
         bottom: 24px;
         left: 50%;
         transform: translateX(-50%);
-        width: auto;
-        max-width: 90vw;
-        text-align: center;
+        align-items: center;
+        max-width: 92vw;
     }
 
     .partners-overline {
-        margin-bottom: 12px;
-        margin-right: -4px;
-        /* Maintain offset for small text center */
+        margin-bottom: 0;
+        margin-right: 12px;
     }
 
     .partners-logo-strip {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         justify-content: center;
         align-items: center;
-        gap: 20px;
+        gap: 16px;
     }
 
     .partner-logo {
-        height: 40px;
+        height: 38px;
         margin: 0 !important;
-        /* Remove any biased margins on mobile */
     }
 
     img[alt="Spa Ceylon"] {
-        height: 50px;
+        height: 48px;
+        /* Keep it slightly larger but remove biased margin-left */
+        margin-left: 0 !important;
     }
 }
 
@@ -611,13 +609,15 @@ img[alt="LuvEsence"]:active {
 }
 
 .agenda-time {
-    width: 100px;
+    width: 110px;
+    min-width: 110px;
     text-align: right;
     padding-right: 30px;
     font-family: var(--font-heading);
     font-weight: 600;
     color: var(--color-accent-gold);
     flex-shrink: 0;
+    white-space: nowrap;
     padding-top: 26px;
 }
 
@@ -636,9 +636,9 @@ img[alt="LuvEsence"]:active {
     content: '';
     position: absolute;
     top: 26px;
-    left: -24px;
+    left: -34px;
+    /* Nudged 10px right */
     transform: translateX(-50%);
-    /* Position exactly on the timeline */
     box-sizing: border-box;
     width: 16px;
     height: 16px;
@@ -967,7 +967,8 @@ img[alt="LuvEsence"]:active {
     /* Explicit background to stop bleed */
     outline: 1px solid transparent;
     border: none;
-    overflow: hidden;
+    /* overflow: visible intentionally — overflow:hidden was clipping the floating 'Click me' tooltip.
+       Black bar bleed is already prevented by the explicit #111111 background + outline trick. */
     color: #FFFFFF;
     /* White text */
     border-radius: var(--radius-card);
@@ -1597,7 +1598,7 @@ img[alt="LuvEsence"]:active {
     }
 
     /* Mobile UI & Performance Fixes */
-    .featured-section,
+    /* NOTE: featured-section excluded — contain:content clips the .interaction-hint-popup tooltip */
     .speakers-section,
     .categories-section {
         contain: content;
