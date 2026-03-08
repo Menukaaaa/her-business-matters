@@ -103,9 +103,23 @@ const fallbackBusinesses = [
 ];
 
 // Configuration - OpenSheet Endpoints
+const API_BASE = "https://opensheet.elk.sh/1vY1Q4g2XQI1e7P5i-I7NpVCTMXcJ5U4leWDZupT8G1w";
 const API_URLS = {
-    businesses: "https://opensheet.elk.sh/13gYm5__e9eiEXFbCrjs-17GlcUgAghl-zZIWsxccEe8/WOMENSDAY" // Keeping previous URL for businesses as requested
+    businesses: `${API_BASE}/1`
 };
+
+// Helper to convert Google Drive share links to direct image URLs
+function convertDriveLink(url) {
+    if (!url) return '';
+    // Handle both /d/ID and open?id=ID formats
+    const driveRegex = /\/d\/([a-zA-Z0-9_-]+)|[?&]id=([a-zA-Z0-9_-]+)/;
+    const match = url.match(driveRegex);
+    if (match) {
+        const id = match[1] || match[2];
+        if (id) return `https://drive.google.com/uc?export=view&id=${id}`;
+    }
+    return url;
+}
 
 // Elements
 const loadingOverlay = document.getElementById('loading-overlay');
@@ -187,12 +201,17 @@ function handleScroll() {
 async function initApp() {
     try {
         // Fetch businesses endpoint
-        const response = await fetch(API_URLS.businesses);
+        let response = await fetch(API_URLS.businesses);
         const data = await response.json();
 
-        if (data && !data.error) {
-            appData.businesses = data;
+        if (data && !data.error && Array.isArray(data)) {
+            // Process logos before pushing to state
+            appData.businesses = data.map(item => ({
+                ...item,
+                logo: convertDriveLink(item.logo)
+            }));
         } else {
+            console.warn("API returned error or empty data, using fallback.");
             appData.businesses = fallbackBusinesses;
         }
 
@@ -333,7 +352,7 @@ window.openSpeakerModal = function (index) {
 
 // Card Template
 function createCardHTML(business) {
-    const isSpaCeylon = business.name.toLowerCase() === 'spa ceylon';
+    const isSpaCeylon = business.name && business.name.toLowerCase() === 'spa ceylon';
     const highlightClass = isSpaCeylon ? 'highlight-spa-ceylon' : '';
 
     let logoHTML = '';
@@ -345,7 +364,7 @@ function createCardHTML(business) {
     }
 
     // Safe encoding to prevent quote issues in HTML onClick attributes
-    const encodedDataId = btoa(encodeURIComponent(business.name));
+    const encodedDataId = btoa(encodeURIComponent(business.name || ''));
 
     return `
         <div class="card ${highlightClass}" onclick="openModal('${encodedDataId}')">

@@ -351,39 +351,42 @@ img[alt="LuvEsence"]:active {
 /* For white logo overrides on light backgrounds, unused here due to black ribbon approach */
 
 @media (max-width: 768px) {
-    .hero-actions {
-        flex-direction: column;
-        width: 100%;
-        max-width: 300px;
+    .hero-partners {
+        display: flex;
+        flex-direction: column !important;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: auto;
+        max-width: 90vw;
+        text-align: center;
     }
 
-    .hero-actions .primary-btn {
-        width: 100%;
-        text-align: center;
+    .partners-overline {
+        margin-bottom: 12px;
+        margin-right: -4px;
+        /* Maintain offset for small text center */
+    }
+
+    .partners-logo-strip {
+        display: flex;
+        flex-wrap: wrap;
         justify-content: center;
+        align-items: center;
+        gap: 20px;
     }
 
     .partner-logo {
         height: 40px;
-        /* Slightly smaller on tiny screens */
+        margin: 0 !important;
+        /* Remove any biased margins on mobile */
     }
 
     img[alt="Spa Ceylon"] {
         height: 50px;
-        margin-left: 10px;
-        /* Reduce the offset on mobile to keep the pill centered */
-    }
-
-    .partners-logo-strip {
-        gap: 16px;
-        /* Tighter gap to cleanly fit all three logos horizontally */
-    }
-
-    .hero-partners {
-        padding: 12px 20px;
-        bottom: 24px;
-        max-width: 90vw;
-        /* Keep pill constrained on small mobile viewports */
     }
 }
 
@@ -626,7 +629,7 @@ img[alt="LuvEsence"]:active {
     box-shadow: var(--shadow-soft);
     position: relative;
     margin-left: 40px;
-    border-left: 4px solid var(--color-bg-secondary);
+    border-left: 4px solid var(--color-accent-gold);
 }
 
 .agenda-content::before {
@@ -969,7 +972,6 @@ img[alt="LuvEsence"]:active {
     /* White text */
     border-radius: var(--radius-card);
     padding: 24px;
-    /* Tighter padding */
     width: clamp(240px, 18vw, 320px);
     /* Removed fixed height to eliminate whitespace */
     /* Fluid width: fits 5 on big screens, scales down nicely */
@@ -1028,8 +1030,8 @@ img[alt="LuvEsence"]:active {
 .card-logo {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    /* Or cover depending on logo style */
+    object-fit: cover;
+    object-position: center;
 }
 
 .card-logo-placeholder {
@@ -1580,22 +1582,17 @@ img[alt="LuvEsence"]:active {
 
     .featured-grid {
         display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
+        flex-direction: column;
         width: 100%;
-        overflow-x: auto;
-        padding-bottom: 20px;
-        padding-right: 20px;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        gap: 16px;
+        padding: 24px 16px 0 16px;
+        /* Crush whitespace above featured boxes */
+        gap: 20px;
     }
 
     .featured-grid .card {
-        width: 85vw;
-        min-width: 85vw;
-        flex: 0 0 85vw;
-        scroll-snap-align: center;
+        width: 100%;
+        min-width: 0;
+        flex: 1 1 auto;
         max-width: none;
     }
 
@@ -1609,37 +1606,34 @@ img[alt="LuvEsence"]:active {
 
     .card,
     .speaker-card {
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-        /* Lighten shadows */
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        box-shadow: none !important;
+        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        will-change: auto !important;
+        /* Kill repaint stutter loops */
     }
 
     .speaker-card {
-        width: 85vw;
-        min-width: 85vw;
-        flex: 0 0 85vw;
+        width: 80vw;
+        min-width: 80vw;
+        flex: 0 0 80vw;
+        flex-shrink: 0;
     }
 
     .speakers-carousel {
-        padding-right: 20px;
+        /* Premium Edge Fade */
+        -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
+        mask-image: linear-gradient(to right, black 90%, transparent 100%);
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+        padding-bottom: 16px;
+        padding-right: 5vw;
+        /* Allow the last card to peek off the edge naturally */
     }
 
-    /* Native swipe indicators scrollbars */
-    .speakers-carousel::-webkit-scrollbar,
-    .featured-grid::-webkit-scrollbar {
-        display: block;
-        height: 3px;
-    }
-
-    .speakers-carousel::-webkit-scrollbar-track,
-    .featured-grid::-webkit-scrollbar-track {
-        background: rgba(0, 0, 0, 0.03);
-    }
-
-    .speakers-carousel::-webkit-scrollbar-thumb,
-    .featured-grid::-webkit-scrollbar-thumb {
-        background: rgba(0, 0, 0, 0.15);
-        border-radius: 4px;
+    /* Native swipe indicators scrollbars - completely hidden to favor exact 80vw peel */
+    .speakers-carousel::-webkit-scrollbar {
+        display: none !important;
     }
 }
