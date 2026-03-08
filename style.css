@@ -467,22 +467,28 @@ img[alt="LuvEsence"]:active {
 /* --- Scroll Reveal Sections --- */
 .reveal-section {
     opacity: 0;
-    transform: translate3d(0, 30px, 0);
-    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+    transform: translate3d(0, 16px, 0);
+    /* Reduced from 30px for snappier feel */
+    transition: opacity 0.45s ease-out, transform 0.45s ease-out;
+    /* Faster: was 0.7s */
     backface-visibility: hidden;
-    will-change: transform, opacity;
+    /* will-change removed from base state — applying it to ALL elements hogs GPU memory
+       and causes the main-thread stutter the user experiences */
 }
 
 .reveal-section.visible {
     opacity: 1;
     transform: translate3d(0, 0, 0);
+    will-change: auto;
+    /* Release GPU layer after animation completes */
 }
 
 /* --- Sections --- */
 .section-container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 60px 24px;
+    padding: 48px 24px;
+    /* Reduced from 60px for tighter premium density */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -498,7 +504,8 @@ img[alt="LuvEsence"]:active {
 
 .featured-section .section-container {
     max-width: 1600px;
-    padding: 80px 24px 40px;
+    padding: 60px 24px 16px;
+    /* Reduced bottom from 40px to 16px */
     /* Tighter padding for featured */
 }
 
@@ -651,7 +658,8 @@ img[alt="LuvEsence"]:active {
 
 .agenda-item {
     display: flex;
-    margin-bottom: 40px;
+    margin-bottom: 24px;
+    /* Reduced from 40px for tighter schedule */
     position: relative;
 }
 
@@ -766,13 +774,12 @@ img[alt="LuvEsence"]:active {
     overflow-x: auto;
     gap: 16px;
     padding-bottom: 120px;
-    /* Breathing room for popup to float into */
     scrollbar-width: none;
-    /* Firefox */
     -ms-overflow-style: none;
-    /* IE and Edge */
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+    min-height: 300px;
+    /* Reserve space during fetch to prevent CLS */
 }
 
 /* Z-Index stacking: Speakers sits physically above Featured Brands */
@@ -829,6 +836,8 @@ img[alt="LuvEsence"]:active {
 .speaker-img {
     width: 100%;
     height: 250px;
+    aspect-ratio: 1 / 1;
+    /* Reserve space before headshot loads */
     object-fit: cover;
     object-position: center top;
     border-radius: var(--radius-card) var(--radius-card) 0 0;
@@ -999,10 +1008,11 @@ img[alt="LuvEsence"]:active {
     overflow: visible !important;
 }
 
-/* Extra bottom breathing room on the featured section so popup above first card clears the heading */
+/* Featured section popup breathing room: only top, no extra bottom */
 @media (max-width: 768px) {
     .featured-section {
-        padding-bottom: 80px !important;
+        padding-bottom: 24px !important;
+        /* Removed excessive 80px that caused dead space */
     }
 }
 
@@ -1026,16 +1036,13 @@ img[alt="LuvEsence"]:active {
 .featured-grid {
     display: flex;
     gap: 20px;
-    /* Balanced gap for desktop */
     padding: 50px 10px 10px 10px;
-    /* Added ample top padding so popup doesn't clip */
     width: 100%;
     overflow: visible;
-    /* Let popup float above cards */
-    /* Stretch completely */
     margin: 0 auto;
     align-items: flex-start;
-    /* Prevent expansion sibling stretch */
+    min-height: 280px;
+    /* Reserve space during API fetch to prevent CLS */
 }
 
 .featured-grid .card {
@@ -1106,10 +1113,13 @@ img[alt="LuvEsence"]:active {
 .card-logo-container {
     width: 80px;
     height: 80px;
+    aspect-ratio: 1 / 1;
+    /* Reserves exact space before image loads — prevents CLS */
     border-radius: 50%;
     overflow: hidden;
     background-color: #ffffff;
-    /* Keep white for logo contrast */
+    flex-shrink: 0;
+    /* Never collapse during layout */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1472,10 +1482,12 @@ img[alt="LuvEsence"]:active {
 .bg-animation .shape {
     position: absolute;
     filter: blur(80px);
-    /* Slightly less blur for stronger color impact */
     border-radius: 50%;
     opacity: 0.8;
-    /* Significantly increased base opacity */
+    /* GPU compositing — prevents shape animation from affecting scroll framerate */
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
 }
 
 .shape-1 {
@@ -1600,11 +1612,11 @@ img[alt="LuvEsence"]:active {
 
 @media (max-width: 768px) {
 
-    /* CRUSH SECTION WHITESPACE */
+    /* TIGHTEN SECTION WHITESPACE (Mobile) */
     .details-section .section-container,
     .agenda-section .section-container,
     .speakers-section .section-container {
-        padding: 40px 16px !important;
+        padding: 32px 16px !important;
     }
 
     /* Featured section needs extra top padding so "Click me" popup isn't clipped */
