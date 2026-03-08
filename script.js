@@ -324,6 +324,12 @@ function renderSpeakers() {
     });
 
     speakersContainer.innerHTML = html;
+
+    // Inject swipe indicator above carousel (mobile-only via CSS)
+    const swipeHint = document.createElement('p');
+    swipeHint.className = 'swipe-hint';
+    swipeHint.textContent = 'Swipe to explore →';
+    speakersContainer.parentElement.insertBefore(swipeHint, speakersContainer);
 }
 
 window.openSpeakerModal = function (index) {

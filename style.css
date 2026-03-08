@@ -352,38 +352,42 @@ img[alt="LuvEsence"]:active {
 
 @media (max-width: 768px) {
 
-    /* Restore horizontal pill — logos side by side */
+    /* MINIATURE DESKTOP PILL - stays in one row, shrunk to fit */
     .hero-partners {
-        flex-direction: row;
-        padding: 12px 20px;
-        bottom: 24px;
+        flex-direction: row !important;
+        padding: 8px 16px !important;
+        gap: 12px !important;
+        bottom: 16px;
         left: 50%;
         transform: translateX(-50%);
+        max-width: 90vw;
         align-items: center;
-        max-width: 92vw;
+        flex-wrap: nowrap !important;
     }
 
     .partners-overline {
         margin-bottom: 0;
-        margin-right: 12px;
+        margin-right: 8px;
+        font-size: 8px !important;
+        letter-spacing: 2px;
+        white-space: nowrap;
     }
 
     .partners-logo-strip {
         display: flex;
-        flex-wrap: nowrap;
+        flex-wrap: nowrap !important;
         justify-content: center;
         align-items: center;
-        gap: 16px;
+        gap: 12px !important;
     }
 
     .partner-logo {
-        height: 38px;
+        height: 16px !important;
         margin: 0 !important;
     }
 
     img[alt="Spa Ceylon"] {
-        height: 48px;
-        /* Keep it slightly larger but remove biased margin-left */
+        height: 20px !important;
         margin-left: 0 !important;
     }
 }
@@ -1511,6 +1515,15 @@ img[alt="LuvEsence"]:active {
 }
 
 @media (max-width: 768px) {
+
+    /* CRUSH SECTION WHITESPACE */
+    .details-section .section-container,
+    .agenda-section .section-container,
+    .speakers-section .section-container,
+    .featured-section .section-container {
+        padding: 40px 16px !important;
+    }
+
     .section-container {
         padding: 50px 20px;
     }
@@ -1605,14 +1618,22 @@ img[alt="LuvEsence"]:active {
         /* Isolate GPU repaints */
     }
 
+    /* PERFORMANCE NUKES - remove all heavy painting on mobile */
     .card,
-    .speaker-card {
+    .speaker-card,
+    .agenda-content {
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
         box-shadow: none !important;
-        border: 1px solid rgba(0, 0, 0, 0.08) !important;
+        border: 1px solid rgba(0, 0, 0, 0.1) !important;
         will-change: auto !important;
-        /* Kill repaint stutter loops */
+    }
+
+    .speakers-carousel,
+    .featured-scroll-container,
+    .featured-grid {
+        transform: translateZ(0);
+        /* Force GPU layer */
     }
 
     .speaker-card {
@@ -1637,4 +1658,22 @@ img[alt="LuvEsence"]:active {
     .speakers-carousel::-webkit-scrollbar {
         display: none !important;
     }
+
+    /* Swipe hint text - only visible on mobile */
+    .swipe-hint {
+        display: block;
+        text-align: right;
+        font-size: 10px;
+        text-transform: uppercase;
+        color: #c6a75e;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        padding-right: 4px;
+        font-family: var(--font-heading);
+    }
+}
+
+/* Hide swipe hint on desktop */
+.swipe-hint {
+    display: none;
 }
