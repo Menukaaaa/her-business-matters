@@ -183,31 +183,61 @@ a {
 @media (max-width: 768px) {
     .hamburger-menu {
         display: flex;
+        position: relative;
+        z-index: 1001;
     }
 
     .nav-links {
+        /* Floating glassy pill - GPU-accelerated open/close */
         position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: rgba(230, 140, 160, 0.95);
+        top: 68px;
+        right: 16px;
+        left: auto;
+        width: 220px;
+        background: rgba(246, 220, 228, 0.92) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        border-radius: 24px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(198, 167, 94, 0.12);
         flex-direction: column;
-        align-items: center;
+        align-items: stretch;
         gap: 0;
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease-out;
+        z-index: 1200;
+        display: flex !important;
+        /* GPU-only animation — no max-height, no layout thrash */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-15px) scale(0.98);
+        transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            visibility 0.3s;
+        pointer-events: none;
+        /* Remove max-height hack entirely */
+        max-height: none;
+        overflow: visible;
+        padding: 12px 0;
     }
 
     .nav-links.active {
-        max-height: 300px;
-        padding: 10px 0;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: translateY(0) scale(1) !important;
+        pointer-events: auto;
     }
 
     .nav-links a {
         width: 100%;
-        justify-content: center;
-        padding: 12px 0;
+        justify-content: flex-start;
+        padding: 14px 24px;
+        border-bottom: 1px solid rgba(198, 167, 94, 0.15);
+        font-size: 0.85rem;
+        letter-spacing: 1.5px;
+        color: #333;
+    }
+
+    .nav-links a:last-child {
+        border-bottom: none;
     }
 }
 
@@ -351,7 +381,7 @@ img[alt="LuvEsence"]:active {
 
 @media (max-width: 768px) {
 
-    /* BIG BOLD MOBILE PILL - fixed to viewport so it's always in frame */
+    /* BIG BOLD MOBILE PILL - fixed to viewport, animation killed to fix centering */
     .hero-partners {
         position: fixed !important;
         flex-direction: column !important;
@@ -359,9 +389,19 @@ img[alt="LuvEsence"]:active {
         max-width: 400px;
         padding: 24px 20px !important;
         border-radius: 24px;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 20px;
+        /* Use left/right: 0 + margin: auto instead of transform (animation conflicts with transform) */
+        left: 0 !important;
+        right: 0 !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+        bottom: 20px !important;
+        top: auto !important;
+        transform: none !important;
+        /* Kill the animation transform that steals translateX */
+        animation: none !important;
+        /* Kill fadeUp animation that overrides transform */
+        opacity: 1 !important;
+        /* Force visible since animation was setting opacity */
         gap: 0 !important;
         align-items: center;
         text-align: center;
@@ -725,13 +765,25 @@ img[alt="LuvEsence"]:active {
     display: flex;
     overflow-x: auto;
     gap: 16px;
-    padding-bottom: 20px;
+    padding-bottom: 120px;
+    /* Breathing room for popup to float into */
     scrollbar-width: none;
     /* Firefox */
     -ms-overflow-style: none;
     /* IE and Edge */
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+}
+
+/* Z-Index stacking: Speakers sits physically above Featured Brands */
+#speakers {
+    position: relative;
+    z-index: 999 !important;
+}
+
+#featured {
+    position: relative;
+    z-index: 1 !important;
 }
 
 .speakers-carousel::-webkit-scrollbar {
@@ -756,7 +808,8 @@ img[alt="LuvEsence"]:active {
     background: #ffffff;
     /* explicit background to kill black bleed */
     border-radius: var(--radius-card);
-    overflow: hidden;
+    /* overflow: visible — removed overflow:hidden so popup inside cards isn't clipped.
+       Images get their own border-radius below to maintain clean card appearance. */
     outline: 1px solid transparent;
     border: none;
     box-shadow: var(--shadow-soft);
@@ -778,6 +831,8 @@ img[alt="LuvEsence"]:active {
     height: 250px;
     object-fit: cover;
     object-position: center top;
+    border-radius: var(--radius-card) var(--radius-card) 0 0;
+    /* compensates for removed overflow:hidden */
 }
 
 .speaker-info {
@@ -933,13 +988,29 @@ img[alt="LuvEsence"]:active {
 .featured-section {
     background-color: rgba(212, 175, 55, 0.12);
     /* Light gold instead of pink */
+    overflow: visible !important;
+    /* Let the Click Me popup float above */
+    position: relative;
+    z-index: 20;
+    /* Lower than speakers section so popup from cards paints above this section's heading */
+}
+
+.featured-section .section-container {
+    overflow: visible !important;
+}
+
+/* Extra bottom breathing room on the featured section so popup above first card clears the heading */
+@media (max-width: 768px) {
+    .featured-section {
+        padding-bottom: 80px !important;
+    }
 }
 
 /* Hidden scrollbars on normal elements, momentum scrolling */
 .featured-scroll-container {
     width: 100%;
-    /* overflow-x intentionally NOT set here at desktop so the popup can float above without clipping */
     overflow: visible;
+    /* Desktop: let popup float. Mobile: overridden to overflow-x:auto */
     padding-bottom: 32px;
     /* Space for shadow */
     /* Hide scrollbar for cleaner look but keep functionality */
@@ -959,6 +1030,8 @@ img[alt="LuvEsence"]:active {
     padding: 50px 10px 10px 10px;
     /* Added ample top padding so popup doesn't clip */
     width: 100%;
+    overflow: visible;
+    /* Let popup float above cards */
     /* Stretch completely */
     margin: 0 auto;
     align-items: flex-start;
@@ -971,6 +1044,9 @@ img[alt="LuvEsence"]:active {
     flex: 1 1 0;
     /* Ensures 5 columns distribute space equally on desktop */
     min-width: 0;
+    position: relative;
+    z-index: 30;
+    /* Ensures card + popup paints above section heading */
 }
 
 /* --- Cards --- */
@@ -1527,9 +1603,14 @@ img[alt="LuvEsence"]:active {
     /* CRUSH SECTION WHITESPACE */
     .details-section .section-container,
     .agenda-section .section-container,
-    .speakers-section .section-container,
-    .featured-section .section-container {
+    .speakers-section .section-container {
         padding: 40px 16px !important;
+    }
+
+    /* Featured section needs extra top padding so "Click me" popup isn't clipped */
+    .featured-section .section-container {
+        padding: 70px 16px 40px !important;
+        overflow: visible !important;
     }
 
     .section-container {
@@ -1541,8 +1622,8 @@ img[alt="LuvEsence"]:active {
     }
 
     .nav-container {
-        justify-content: center;
-        /* Center the logo */
+        justify-content: space-between;
+        /* Space between logo and hamburger */
         padding: 0 16px;
     }
 
@@ -1617,15 +1698,16 @@ img[alt="LuvEsence"]:active {
 
     /* Mobile UI & Performance Fixes */
     /* NOTE: featured-section excluded — contain:content clips the .interaction-hint-popup tooltip */
-    .speakers-section,
+    /* NOTE: speakers-section excluded — contain:content creates stacking context that clips the popup */
     .categories-section {
         contain: content;
         /* Isolate GPU repaints */
     }
 
-    /* Re-enable overflow-x scroll on the featured container for mobile carousel */
+    /* Featured brands are a vertical stack on mobile — no horizontal scroll needed.
+       overflow: visible ensures the popup isn't clipped (overflow-x:auto implicitly clips overflow-y) */
     .featured-scroll-container {
-        overflow-x: auto;
+        overflow: visible !important;
     }
 
     /* PERFORMANCE NUKES - remove all heavy painting on mobile */

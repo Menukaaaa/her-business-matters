@@ -169,6 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
     handleScroll();
     initApp();
     setupMobileNav();
+    // Reset scroll after content renders (ensures page always starts at top)
+    requestAnimationFrame(() => window.scrollTo(0, 0));
 });
 
 // Event Listeners
@@ -176,16 +178,31 @@ window.addEventListener('scroll', handleScroll);
 
 // Mobile Nav Toggle
 function setupMobileNav() {
-    hamburgerMenu.addEventListener('click', () => {
-        navLinksContainer.classList.toggle('active');
-    });
+    // Re-query after feather.replace() may have re-rendered the icon
+    const hamburger = document.getElementById('hamburger-menu');
+    const navLinks = document.getElementById('nav-links');
 
-    // Close menu when clicking a link
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
-            navLinksContainer.classList.remove('active');
+    if (hamburger && navLinks) {
+        // Direct click on the hamburger container
+        hamburger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navLinks.classList.toggle('active');
         });
-    });
+
+        // Close menu when clicking a nav link
+        navLinks.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!hamburger.contains(e.target) && !navLinks.contains(e.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+    }
 }
 
 // Navbar Scroll Effect
