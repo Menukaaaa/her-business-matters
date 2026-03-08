@@ -142,7 +142,7 @@ let appData = {
         event_time: "10:00 AM - 6:00 PM",
         event_venue: "BMICH, Colombo, Sri Lanka",
         about_text: "Join us for a full day of inspiring keynotes, interactive workshops, and networking with Sri Lanka's finest female entrepreneurs. Celebrate the visionaries who are redefining the business landscape.",
-        ticket_link: "#"
+        ticket_link: "https://event.spaceylon.com/"
     },
     agenda: [
         { time_slot: "09:00 AM", session_title: "Registration & Welcome", speaker_name: "", description: "Arrival, networking, and morning tea." },
