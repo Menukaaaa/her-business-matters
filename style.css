@@ -739,16 +739,15 @@ img[alt="LuvEsence"]:active {
     max-width: 350px;
     min-width: 80vw;
     scroll-snap-align: center;
-    background: rgba(255, 255, 255, 0.6);
-    /* Light glassy */
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: #ffffff;
+    /* explicit background to kill black bleed */
     border-radius: var(--radius-card);
     overflow: hidden;
+    outline: 1px solid transparent;
+    border: none;
     box-shadow: var(--shadow-soft);
     display: flex;
     flex-direction: column;
-    border: 1px solid rgba(255, 255, 255, 0.4);
     transform: translate3d(0, 0, 0);
     backface-visibility: hidden;
 }
@@ -961,11 +960,11 @@ img[alt="LuvEsence"]:active {
 
 /* --- Cards --- */
 .card {
-    background: rgba(21, 21, 21, 0.75);
-    /* Dark glassy */
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: #111111;
+    /* Explicit background to stop bleed */
+    outline: 1px solid transparent;
+    border: none;
+    overflow: hidden;
     color: #FFFFFF;
     /* White text */
     border-radius: var(--radius-card);
@@ -1580,16 +1579,67 @@ img[alt="LuvEsence"]:active {
     }
 
     .featured-grid {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
         width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 20px;
-        padding-bottom: 0px;
+        overflow-x: auto;
+        padding-bottom: 20px;
+        padding-right: 20px;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: 16px;
     }
 
     .featured-grid .card {
-        width: 100%;
+        width: 85vw;
+        min-width: 85vw;
+        flex: 0 0 85vw;
+        scroll-snap-align: center;
         max-width: none;
-        flex: 1 1 auto;
+    }
+
+    /* Mobile UI & Performance Fixes */
+    .featured-section,
+    .speakers-section,
+    .categories-section {
+        contain: content;
+        /* Isolate GPU repaints */
+    }
+
+    .card,
+    .speaker-card {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+        /* Lighten shadows */
+    }
+
+    .speaker-card {
+        width: 85vw;
+        min-width: 85vw;
+        flex: 0 0 85vw;
+    }
+
+    .speakers-carousel {
+        padding-right: 20px;
+    }
+
+    /* Native swipe indicators scrollbars */
+    .speakers-carousel::-webkit-scrollbar,
+    .featured-grid::-webkit-scrollbar {
+        display: block;
+        height: 3px;
+    }
+
+    .speakers-carousel::-webkit-scrollbar-track,
+    .featured-grid::-webkit-scrollbar-track {
+        background: rgba(0, 0, 0, 0.03);
+    }
+
+    .speakers-carousel::-webkit-scrollbar-thumb,
+    .featured-grid::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
     }
 }
