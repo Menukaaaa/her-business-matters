@@ -102,16 +102,30 @@ const fallbackBusinesses = [
     }
 ];
 
-// Configuration - OpenSheet Endpoints
+// Configuration - OpenSheet Endpoints (businesses only; agenda is now hardcoded)
 const API_BASE = "https://opensheet.elk.sh/1vY1Q4g2XQI1e7P5i-I7NpVCTMXcJ5U4leWDZupT8G1w";
 const API_URLS = {
     businesses: `${API_BASE}/1`
 };
 
-// Helper to convert Google Drive share links to direct image URLs
-function convertDriveLink(url) {
+// --- Hardcoded Agenda Data ---
+const agendaData = [
+    { time: "09:00 AM", label: "Keynote speaker", title: "Influencer, Email & Platform Marketing", speaker: "Spa Ceylon Team", desc: "Learn practical strategies for building brand visibility through influencer collaborations, effective email marketing, and smart use of digital platforms." },
+    { time: "09:45 AM", label: "Keynote speaker", title: "Personal Branding", speaker: "Shalin Balasooriya", desc: "Discover how to build a strong personal brand that helps you stand out, build credibility, and grow your business." },
+    { time: "10:30 AM", label: "Keynote speaker", title: "TikTok & Meta Marketing", speaker: "Roar", desc: "Understand how to leverage TikTok and Meta platforms to reach new audiences, create engaging content, and drive business growth." },
+    { time: "11:15 AM", label: "Keynote speaker", title: "Accounting and Compliance", speaker: "Simple Books", desc: "A practical guide to managing your finances, maintaining proper records, and staying compliant as your business grows." },
+    { time: "12:00 PM", label: "Keynote speaker", title: "How to Pitch to Investors", speaker: "Surge", desc: "Learn what investors look for and how to present your business idea with confidence and clarity." },
+    { time: "01:00 PM", label: "Keynote speaker", title: "Good Grooming", speaker: "Shenuka Fernando", desc: "Explore the importance of personal presentation and grooming in building confidence and professional presence." },
+    { time: "01:45 PM", label: "Keynote speaker", title: "Business Finances", speaker: "Commercial Bank", desc: "Gain insights into managing business finances, funding options, and financial planning for sustainable growth." },
+    { time: "02:30 PM", label: "Keynote speaker", title: "Logistics (TBC)", speaker: "PickMe", desc: "Learn how efficient logistics and delivery solutions can support and scale your business operations." },
+    { time: "03:15 PM", label: "Keynote speaker", title: "Leveraging Quick Commerce", speaker: "Celeste", desc: "Understand how quick commerce can help your brand reach customers faster and unlock new sales opportunities." },
+    { time: "04:00 PM", label: "Panel Session", title: "Building a Brand", speaker: "Shalin Balasooriya & Otara Gunewardene (Mod: Saasha)", desc: "An insightful discussion on building a successful brand, featuring experiences, lessons, and advice from leading entrepreneurs." }
+];
+
+// Helper — converts any Google Drive viewer link to a direct embeddable image URL.
+// Handles both /file/d/FILE_ID/view and open?id=FILE_ID formats.
+function formatDriveImage(url) {
     if (!url) return '';
-    // Handle both /d/ID and open?id=ID formats
     const driveRegex = /\/d\/([a-zA-Z0-9_-]+)|[?&]id=([a-zA-Z0-9_-]+)/;
     const match = url.match(driveRegex);
     if (match) {
@@ -121,15 +135,26 @@ function convertDriveLink(url) {
     return url;
 }
 
+// Bulletproof Google Drive image parser — bypasses CORS/viewer issues.
+// Uses the lh3.googleusercontent.com CDN which serves raw image bytes.
+// Extracts the Drive File ID (25+ alphanumeric chars) from any Drive URL format.
+function parseGoogleDriveImage(url) {
+    if (!url) return '';
+    const match = url.match(/[-\w]{25,}/);
+    if (match) {
+        return `https://lh3.googleusercontent.com/d/${match[0]}`;
+    }
+    return url;
+}
+
 // Elements
 const loadingOverlay = document.getElementById('loading-overlay');
 const navbar = document.getElementById('navbar');
 const hamburgerMenu = document.getElementById('hamburger-menu');
 const navLinksContainer = document.getElementById('nav-links');
-const heroQuote = document.getElementById('hero-quote');
+const heroQuote = null; // Quote is now hardcoded in HTML
 const detailsCard = document.getElementById('details-card');
 const agendaContainer = document.getElementById('agenda-container');
-const speakersContainer = document.getElementById('speakers-container');
 const featuredGrid = document.getElementById('featured-grid');
 const categoriesContainer = document.getElementById('categories-container');
 const otherCategoryContainer = document.getElementById('other-category-container');
@@ -137,25 +162,14 @@ const otherCategoryContainer = document.getElementById('other-category-container
 // State
 let appData = {
     eventDetails: {
-        hero_quote: "Meet the women shaping the future of local business. Explore our curated showcase of Sri Lanka's finest female-led brands.",
-        event_date: "March 8, 2026",
+        hero_quote: "Meet the women building, leading, and reshaping Sri Lanka business landscape.<br>Discover a curated showcase of inspiring female-led brands and the stories behind them.<br>From emerging entrepreneurs to established founders, #herbusinessmatters brings together women who are turning ideas into impact.",
+        event_date: "March 16 , 2026",
         event_time: "10:00 AM - 6:00 PM",
-        event_venue: "BMICH, Colombo, Sri Lanka",
-        about_text: "Join us for a full day of inspiring keynotes, interactive workshops, and networking with Sri Lanka's finest female entrepreneurs. Celebrate the visionaries who are redefining the business landscape.",
+        event_venue: "BMICH, Colombo",
+        about_text: "#herbusinessmatters celebrates the women shaping Sri Lanka's business landscape.<br>Join us for a day of inspiring conversations, interactive sessions, and meaningful connections with some of the country's most exciting female entrepreneurs.",
         ticket_link: "https://event.spaceylon.com/"
     },
-    agenda: [
-        { time_slot: "09:00 AM", session_title: "Registration & Welcome", speaker_name: "", description: "Arrival, networking, and morning tea." },
-        { time_slot: "10:00 AM", session_title: "Keynote Address", speaker_name: "Jane Doe", description: "The future of female leadership and innovation in Sri Lanka." },
-        { time_slot: "11:30 AM", session_title: "Panel Discussion: Scaling Your Brand", speaker_name: "Industry Leaders", description: "Insights from successful founders on growth and sustainability." },
-        { time_slot: "01:00 PM", session_title: "Networking Lunch & Exhibition", speaker_name: "", description: "Connect with exhibitors and explore featured brands." },
-        { time_slot: "03:00 PM", session_title: "Closing Ceremony", speaker_name: "Sarah Smith", description: "Final thoughts and awards presentation." }
-    ],
-    speakers: [
-        { name: "Jane Doe", role: "CEO, TechInnovate", headshot: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300&h=300", bio: "Jane is a pioneer in the tech industry, having founded multiple successful startups globally." },
-        { name: "Sarah Smith", role: "Founder, GreenLife", headshot: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=300&h=300", bio: "Sarah built a sustainable brand from scratch that now exports to over 15 countries." },
-        { name: "Aisha Khan", role: "Director, CreativeArts", headshot: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=300&h=300", bio: "Aisha leads one of the top creative agencies, championing design and marketing excellence." }
-    ],
+    agenda: agendaData,
     businesses: []
 };
 
@@ -170,7 +184,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initApp();
     setupMobileNav();
     // Reset scroll after content renders (ensures page always starts at top)
-    requestAnimationFrame(() => window.scrollTo(0, 0));
+    requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        document.body.style.overflow = '';
+        document.documentElement.style.overflow = '';
+    });
 });
 
 // Event Listeners
@@ -225,8 +243,9 @@ async function initApp() {
             // Process logos before pushing to state
             appData.businesses = data.map(item => ({
                 ...item,
-                logo: convertDriveLink(item.logo)
+                newlogo: parseGoogleDriveImage(item.newlogo)
             }));
+            console.log("Sample Business Data:", appData.businesses[0]);
         } else {
             console.warn("API returned error or empty data, using fallback.");
             appData.businesses = fallbackBusinesses;
@@ -241,6 +260,7 @@ async function initApp() {
         // Hide loading overlay
         setTimeout(() => {
             loadingOverlay.style.opacity = '0';
+            loadingOverlay.style.pointerEvents = 'none'; // CRITICAL: Stop eating touches
             setTimeout(() => loadingOverlay.style.display = 'none', 500);
         }, 500);
     }
@@ -248,12 +268,10 @@ async function initApp() {
 
 function renderApp() {
     if (appData.eventDetails) {
-        heroQuote.textContent = appData.eventDetails.hero_quote || "Meet the women shaping the future of business.";
         renderEventDetails(appData.eventDetails);
     }
 
     renderAgenda();
-    renderSpeakers();
 
     renderFeatured();
     renderCategories();
@@ -299,16 +317,17 @@ function renderAgenda() {
 
     let html = '';
     appData.agenda.forEach((item, index) => {
-        const isSpeakerPresent = item.speaker_name && item.speaker_name.trim() !== '';
+        const isSpeakerPresent = item.speaker && item.speaker.trim() !== '';
         const indexClass = `delay-${index % 5}`; // Limit delay steps
 
         html += `
             <div class="agenda-item reveal-section ${indexClass}">
-                <div class="agenda-time">${item.time_slot || ''}</div>
+                <div class="agenda-time">${item.time || ''}</div>
                 <div class="agenda-content">
-                    <h3 class="agenda-title">${item.session_title || ''}</h3>
-                    ${isSpeakerPresent ? `<p class="agenda-speaker"><i data-feather="user"></i> ${item.speaker_name}</p>` : ''}
-                    <p class="agenda-desc">${item.description || ''}</p>
+                    ${item.label ? `<span style="font-size: 0.75rem; color: #c6a75e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: block; font-weight: 600;">${item.label}</span>` : ''}
+                    <h3 class="agenda-title">${item.title || ''}</h3>
+                    ${isSpeakerPresent ? `<p class="agenda-speaker"><i data-feather="user"></i> ${item.speaker}</p>` : ''}
+                    <p class="agenda-desc">${item.desc || ''}</p>
                 </div>
             </div>
         `;
@@ -317,70 +336,16 @@ function renderAgenda() {
     agendaContainer.innerHTML = html;
 }
 
-function renderSpeakers() {
-    if (!appData.speakers || appData.speakers.length === 0) {
-        document.getElementById('speakers').style.display = 'none';
-        return;
-    }
-
-    let html = '';
-    appData.speakers.forEach((speaker, index) => {
-        const hasBio = speaker.bio && speaker.bio.trim() !== '';
-        // Using ui-avatars to generate initials based on the speaker's name
-        const initialsImg = `https://ui-avatars.com/api/?name=${encodeURIComponent(speaker.name)}&background=111111&color=c6a75e&size=250&font-size=0.4&bold=true`;
-
-        html += `
-            <div class="speaker-card reveal-section" ${hasBio ? `onclick="openSpeakerModal(${index})" style="cursor: pointer;"` : ''}>
-                <img src="${speaker.headshot || initialsImg}" alt="${speaker.name}" class="speaker-img" loading="lazy">
-                <div class="speaker-info" style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
-                    <h3 class="speaker-name">${speaker.name}</h3>
-                    <p class="speaker-role" style="margin-bottom: 0;">${speaker.role}</p>
-                </div>
-            </div>
-        `;
-    });
-
-    speakersContainer.innerHTML = html;
-
-    // Inject swipe indicator above carousel (mobile-only via CSS)
-    const swipeHint = document.createElement('p');
-    swipeHint.className = 'swipe-hint';
-    swipeHint.textContent = 'Swipe to explore →';
-    speakersContainer.parentElement.insertBefore(swipeHint, speakersContainer);
-}
-
-window.openSpeakerModal = function (index) {
-    const speaker = appData.speakers[index];
-    if (!speaker) return;
-
-    const initialsImg = `https://ui-avatars.com/api/?name=${encodeURIComponent(speaker.name)}&background=111111&color=c6a75e&size=250&font-size=0.4&bold=true`;
-    const headshot = speaker.headshot || initialsImg;
-
-    const modalOverlay = document.getElementById('business-modal');
-    const modalBody = document.getElementById('modal-body-content');
-
-    modalBody.innerHTML = `
-        <div class="modal-body" style="text-align: center;">
-            <img src="${headshot}" alt="${speaker.name}" class="modal-logo" style="width: 120px; height: 120px; object-fit: cover; border-radius: 50%;">
-            <h2 class="modal-title" style="margin-top: 16px;">${speaker.name}</h2>
-            <p class="speaker-role" style="color: var(--color-accent-gold); font-weight: 500; margin-bottom: 24px;">${speaker.role}</p>
-            <p class="modal-description">${speaker.bio}</p>
-        </div>
-    `;
-
-    feather.replace();
-    modalOverlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-};
-
 // Card Template
 function createCardHTML(business) {
     const isSpaCeylon = business.name && business.name.toLowerCase() === 'spa ceylon';
     const highlightClass = isSpaCeylon ? 'highlight-spa-ceylon' : '';
 
     let logoHTML = '';
-    if (business.logo) {
-        logoHTML = `<div class="card-logo-container"><img src="${business.logo}" alt="${business.name} logo" class="card-logo" loading="lazy" /></div>`;
+    // Run newlogo through bulletproof CDN bypass parser
+    const logoSrc = parseGoogleDriveImage(business.newlogo);
+    if (logoSrc) {
+        logoHTML = `<div class="card-logo-container"><img src="${logoSrc}" alt="${business.name} logo" class="card-logo" loading="lazy" decoding="async" style="object-fit: contain;" /></div>`;
     } else {
         const initial = business.name ? business.name.charAt(0).toUpperCase() : '?';
         logoHTML = `<div class="card-logo-container"><span class="card-logo-placeholder">${initial}</span></div>`;
@@ -402,7 +367,9 @@ function createCardHTML(business) {
 // Render Featured Layer
 function renderFeatured() {
     const featuredList = appData.businesses.filter(item => {
-        return item.featured === true || item.featured === "TRUE" || item.featured === "true";
+        if (!item || !item.featured) return false;
+        const flag = String(item.featured).trim().toUpperCase();
+        return flag === 'TRUE';
     }).slice(0, 5); // Limit to top 5
 
     if (featuredList.length === 0) {
@@ -421,6 +388,9 @@ function renderFeatured() {
         if (isFirst && !hasSeenHint) {
             cardHtml = cardHtml.replace('<div class="card-header">', '<div class="interaction-hint-popup" id="click-hint">Click me!</div><div class="card-header">');
         }
+
+        // Make featured cards permanently visible, skipping intersection observer
+        cardHtml = cardHtml.replace('class="card ', 'class="card visible ');
 
         html += cardHtml;
     });
@@ -445,7 +415,13 @@ function renderCategories() {
     });
 
     let categoriesHtml = '';
-    const sortedCategories = Object.keys(grouped).sort();
+    const sortedCategories = Object.keys(grouped).sort((a, b) => {
+        const aIsOther = a.toLowerCase().includes('other');
+        const bIsOther = b.toLowerCase().includes('other');
+        if (aIsOther && !bIsOther) return 1;   // push a down
+        if (!aIsOther && bIsOther) return -1;  // push b down
+        return a.localeCompare(b);             // alphabetical for the rest
+    });
 
     sortedCategories.forEach(cat => {
         categoriesHtml += createCategoryBlock(cat, grouped[cat]);
@@ -459,8 +435,16 @@ function renderCategories() {
 }
 
 function createCategoryBlock(title, items) {
+    // Sort: businesses with a valid image float to the top;
+    // empty / null / "N/A" logos are pushed to the bottom.
+    const sorted = [...items].sort((a, b) => {
+        const hasA = (a.newlogo && a.newlogo.trim() !== '' && a.newlogo.trim().toLowerCase() !== 'n/a') ? 1 : 0;
+        const hasB = (b.newlogo && b.newlogo.trim() !== '' && b.newlogo.trim().toLowerCase() !== 'n/a') ? 1 : 0;
+        return hasB - hasA;
+    });
+
     let cardsHtml = '';
-    items.forEach(biz => {
+    sorted.forEach(biz => {
         cardsHtml += createCardHTML(biz);
     });
 
@@ -529,7 +513,7 @@ window.openModal = function (encodedId) {
     // Inject the content into the overlay
     modalBody.innerHTML = `
         <div class="modal-body">
-            ${business.logo ? `<img src="${business.logo}" alt="${business.name} Logo" class="modal-logo" onerror="this.src='header-logo-new3.png'">` : `<img src="header-logo-new3.png" alt="Fallback Logo" class="modal-logo" style="filter: brightness(0) invert(1);">`}
+            ${business.newlogo ? `<img src="${business.newlogo}" alt="${business.name} Logo" class="modal-logo" onerror="this.src='header-logo-new3.png'">` : `<img src="header-logo-new3.png" alt="Fallback Logo" class="modal-logo" style="filter: brightness(0) invert(1);">`}
             <h2 class="modal-title">${business.name}</h2>
             <div class="modal-socials" style="margin-bottom: 24px;">
                 ${socialsHTML}
@@ -624,11 +608,8 @@ function initIntersectionObservers() {
         observer.observe(section);
     });
 
-    // Observe featured cards for staggered load animation
-    document.querySelectorAll('.featured-grid .card').forEach((card, index) => {
-        card.style.animationDelay = `${index * 100}ms`;
-        observer.observe(card);
-    });
+    // We no longer observe individual cards to prevent intersection observer thrashing
+    // on large category lists. Cards will animate in when their category opens.
 }
 
 // Smooth scroll helper
