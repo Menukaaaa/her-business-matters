@@ -293,6 +293,7 @@ a {
     transform: translateY(30px);
     animation: fadeUp 1s ease-out forwards;
     position: relative;
+    transition: min-height 0.4s cubic-bezier(0.25, 1, 0.5, 1), padding 0.4s ease-out;
 }
 
 .hero-content {
@@ -432,6 +433,10 @@ img[alt="LuvEsence"]:active {
     .hero {
         /* Reserve space for the fixed pill so justify-content:center never overlaps it */
         padding-bottom: 160px;
+    }
+
+    .hero-content {
+        margin-top: 30px;
     }
 
     .hero-partners {
