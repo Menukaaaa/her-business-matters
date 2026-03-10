@@ -110,16 +110,18 @@ const API_URLS = {
 
 // --- Hardcoded Agenda Data ---
 const agendaData = [
-    { time: "09:00 AM", label: "Keynote speaker", title: "Influencer, Email & Platform Marketing", speaker: "Spa Ceylon Team", desc: "Learn practical strategies for building brand visibility through influencer collaborations, effective email marketing, and smart use of digital platforms." },
-    { time: "09:45 AM", label: "Keynote speaker", title: "Personal Branding", speaker: "Shalin Balasooriya", desc: "Discover how to build a strong personal brand that helps you stand out, build credibility, and grow your business." },
-    { time: "10:30 AM", label: "Keynote speaker", title: "TikTok & Meta Marketing", speaker: "Roar", desc: "Understand how to leverage TikTok and Meta platforms to reach new audiences, create engaging content, and drive business growth." },
-    { time: "11:15 AM", label: "Keynote speaker", title: "Accounting and Compliance", speaker: "Simple Books", desc: "A practical guide to managing your finances, maintaining proper records, and staying compliant as your business grows." },
-    { time: "12:00 PM", label: "Keynote speaker", title: "How to Pitch to Investors", speaker: "Surge", desc: "Learn what investors look for and how to present your business idea with confidence and clarity." },
-    { time: "01:00 PM", label: "Keynote speaker", title: "Good Grooming", speaker: "Shenuka Fernando", desc: "Explore the importance of personal presentation and grooming in building confidence and professional presence." },
-    { time: "01:45 PM", label: "Keynote speaker", title: "Business Finances", speaker: "Commercial Bank", desc: "Gain insights into managing business finances, funding options, and financial planning for sustainable growth." },
-    { time: "02:30 PM", label: "Keynote speaker", title: "Logistics (TBC)", speaker: "PickMe", desc: "Learn how efficient logistics and delivery solutions can support and scale your business operations." },
-    { time: "03:15 PM", label: "Keynote speaker", title: "Leveraging Quick Commerce", speaker: "Celeste", desc: "Understand how quick commerce can help your brand reach customers faster and unlock new sales opportunities." },
-    { time: "04:00 PM", label: "Panel Session", title: "Building a Brand", speaker: "Shalin Balasooriya & Otara Gunewardene (Mod: Saasha)", desc: "An insightful discussion on building a successful brand, featuring experiences, lessons, and advice from leading entrepreneurs." }
+    { time: "", label: "", title: "Registrations", speaker: "", desc: "" },
+    { time: "", label: "Kickoff", title: "Welcome & Event Kickoff", speaker: "", desc: "" },
+    { time: "", label: "Keynote Session", title: "Marketing Strategy and Implementation", speaker: "Spa Ceylon Marketing Team", desc: "Learn the strategies behind building a powerful brand presence." },
+    { time: "", label: "Keynote Session", title: "Personal Branding", speaker: "Shalin Balasuriya", desc: "Building influence and trust as a founder." },
+    { time: "", label: "Keynote Session", title: "Mastering TikTok & Meta for Business Growth", speaker: "Roar Media", desc: "Practical strategies to grow your brand and reach the right audiences." },
+    { time: "", label: "Break", title: "Refreshment Break", speaker: "", desc: "" },
+    { time: "", label: "Live Performance", title: "Special Anthem Performance", speaker: "Ashanthi De Alwis, Hirushi Jayasena & Melissa", desc: "" },
+    { time: "", label: "Keynote Session", title: "Business Foundations: Accounting & Compliance", speaker: "Simple Books", desc: "Essential financial practices every business should know." },
+    { time: "", label: "Keynote Session", title: "How to Pitch to Investors", speaker: "Surge", desc: "What investors look for and how to present your business with confidence." },
+    { time: "", label: "Keynote Session", title: "Winning with Quick Commerce", speaker: "Celeste", desc: "How brands can leverage fast delivery platforms to boost sales and visibility." },
+    { time: "", label: "Power Talk", title: "Building a Brand That Lasts", speaker: "Shalin Balasuriya & Otara Gunawardene", desc: "An inspiring conversation on entrepreneurship, brand building, and staying relevant." },
+    { time: "", label: "Networking", title: "Photo Session & Networking", speaker: "", desc: "Connect, collaborate, and celebrate the day." }
 ];
 
 // Helper — converts any Google Drive viewer link to a direct embeddable image URL.
@@ -164,9 +166,9 @@ let appData = {
     eventDetails: {
         hero_quote: "Meet the women building, leading, and reshaping Sri Lanka business landscape.<br>Discover a curated showcase of inspiring female-led brands and the stories behind them.<br>From emerging entrepreneurs to established founders, #herbusinessmatters brings together women who are turning ideas into impact.",
         event_date: "March 16 , 2026",
-        event_time: "10:00 AM - 6:00 PM",
-        event_venue: "BMICH, Colombo",
-        about_text: "#herbusinessmatters celebrates the women shaping Sri Lanka's business landscape.<br>Join us for a day of inspiring conversations, interactive sessions, and meaningful connections with some of the country's most exciting female entrepreneurs.",
+        event_time: "8:00 AM - 3:00 PM",
+        event_venue: "BMICH, Colombo - Jasmine Hall",
+        about_text: "Hear directly from experienced founders and industry experts as they share real insights on building, growing and navigating the challenges of running a business.",
         ticket_link: "https://event.spaceylon.com/"
     },
     agenda: agendaData,
@@ -283,7 +285,7 @@ function renderApp() {
 function renderEventDetails(details) {
     let ticketBtnHTML = '';
     if (details.ticket_link) {
-        ticketBtnHTML = `<a href="${details.ticket_link}" target="_blank" rel="noopener noreferrer" class="primary-btn gold-btn">Register / Get Tickets</a>`;
+        ticketBtnHTML = `<a href="${details.ticket_link}" target="_blank" rel="noopener noreferrer" class="primary-btn gold-btn">Get Tickets</a>`;
     }
 
     detailsCard.innerHTML = `
@@ -318,6 +320,7 @@ function renderAgenda() {
     let html = '';
     appData.agenda.forEach((item, index) => {
         const isSpeakerPresent = item.speaker && item.speaker.trim() !== '';
+        const isDescPresent = item.desc && item.desc.trim() !== '';
         const indexClass = `delay-${index % 5}`; // Limit delay steps
 
         html += `
@@ -327,7 +330,7 @@ function renderAgenda() {
                     ${item.label ? `<span style="font-size: 0.75rem; color: #c6a75e; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: block; font-weight: 600;">${item.label}</span>` : ''}
                     <h3 class="agenda-title">${item.title || ''}</h3>
                     ${isSpeakerPresent ? `<p class="agenda-speaker"><i data-feather="user"></i> ${item.speaker}</p>` : ''}
-                    <p class="agenda-desc">${item.desc || ''}</p>
+                    ${isDescPresent ? `<p class="agenda-desc">${item.desc}</p>` : ''}
                 </div>
             </div>
         `;
@@ -355,7 +358,7 @@ function createCardHTML(business) {
     const encodedDataId = btoa(encodeURIComponent(business.name || ''));
 
     return `
-        <div class="card ${highlightClass}" onclick="openModal('${encodedDataId}')">
+        <div class="card brand-card-unified ${highlightClass}" onclick="openModal('${encodedDataId}')">
             <div class="card-header">
                 ${logoHTML}
             </div>
@@ -364,38 +367,69 @@ function createCardHTML(business) {
         `;
 }
 
-// Render Featured Layer
-function renderFeatured() {
-    const featuredList = appData.businesses.filter(item => {
-        if (!item || !item.featured) return false;
-        const flag = String(item.featured).trim().toUpperCase();
-        return flag === 'TRUE';
-    }).slice(0, 5); // Limit to top 5
+// Helper function to figure out the glassmorphism class based on category or parent
+function getGlassClass(biz) {
+    const searchString = `${biz.category || ''} ${biz.parent || ''} ${biz.name || ''}`.toLowerCase();
+    if (searchString.includes('spa ceylon')) return 'glass-card-gold';
+    if (searchString.includes('luvesence') || searchString.includes('luv essence')) return 'glass-card-pink';
+    if (searchString.includes('janet')) return 'glass-card-green';
+    return 'glass-card-gold'; // Fallback
+}
 
-    if (featuredList.length === 0) {
-        document.getElementById('featured').style.display = 'none';
+// Render Featured Layer into three themed grids
+function renderFeatured() {
+    // 1. Filter arrays exactly by the new feature flags
+    const spaCeylonBrands = appData.businesses.filter(b => {
+        if (!b || !b.featured) return false;
+        return String(b.featured).trim().toUpperCase() === 'TRUE-S';
+    });
+
+    const luvEsenceBrands = appData.businesses.filter(b => {
+        if (!b || !b.featured) return false;
+        return String(b.featured).trim().toUpperCase() === 'TRUE-L';
+    });
+
+    const janetBrands = appData.businesses.filter(b => {
+        if (!b || !b.featured) return false;
+        return String(b.featured).trim().toUpperCase() === 'TRUE-J';
+    });
+
+    // Determine if the whole section should be hidden
+    const totalFeatured = spaCeylonBrands.length + luvEsenceBrands.length + janetBrands.length;
+    if (totalFeatured === 0) {
+        const featuredSection = document.getElementById('featured');
+        if (featuredSection) featuredSection.style.display = 'none';
         return;
     }
 
-    let html = '';
-    const hasSeenHint = localStorage.getItem('sawCardHint') === 'true';
-
-    featuredList.forEach((biz, index) => {
-        const isFirst = index === 0;
-        let cardHtml = createCardHTML(biz);
-
-        // Inject the popup hint into the first card if they haven't seen it yet
-        if (isFirst && !hasSeenHint) {
-            cardHtml = cardHtml.replace('<div class="card-header">', '<div class="interaction-hint-popup" id="click-hint">Click me!</div><div class="card-header">');
+    // Helper to render a specific grid
+    const renderGrid = (gridId, brands) => {
+        const gridElem = document.getElementById(gridId);
+        if (!gridElem) return;
+        
+        // Hide wrapper if no brands in this bucket
+        if (brands.length === 0) {
+            gridElem.parentElement.parentElement.style.display = 'none';
+            return;
         }
+        
+        let html = '';
+        brands.slice(0, 5).forEach((biz, index) => {
+            let cardHtml = createCardHTML(biz);
 
-        // Make featured cards permanently visible, skipping intersection observer
-        cardHtml = cardHtml.replace('class="card ', 'class="card visible ');
+            // Interaction hint logic from before
+            if (index === 0 && gridId === 'featured-spa-grid' && localStorage.getItem('sawCardHint') !== 'true') {
+                cardHtml = cardHtml.replace('<div class="card-header">', '<div class="interaction-hint-popup" id="click-hint">Click me!</div><div class="card-header">');
+            }
 
-        html += cardHtml;
-    });
+            html += cardHtml;
+        });
+        gridElem.innerHTML = html;
+    };
 
-    featuredGrid.innerHTML = html;
+    renderGrid('featured-spa-grid', spaCeylonBrands);
+    renderGrid('featured-luv-grid', luvEsenceBrands);
+    renderGrid('featured-janet-grid', janetBrands);
 }
 
 // Render Categories
