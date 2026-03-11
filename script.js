@@ -169,7 +169,7 @@ let appData = {
         event_time: "8:00 AM - 3:00 PM",
         event_venue: "BMICH, Colombo - Jasmine Hall",
         about_text: "Hear directly from experienced founders and industry experts as they share real insights on building, growing and navigating the challenges of running a business.",
-        ticket_link: "https://event.spaceylon.com/"
+        ticket_link: "https://event.spaceylon.com/?event=her-business-matters"
     },
     agenda: agendaData,
     businesses: []
