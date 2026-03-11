@@ -149,6 +149,16 @@ function parseGoogleDriveImage(url) {
     return url;
 }
 
+// Ruthless image validator for category sorting
+const hasValidImage = (business) => {
+    const img = business.newlogo || business.logo || "";
+    const cleanImg = String(img).trim().toUpperCase();
+    if (!cleanImg || cleanImg === "#N/A" || cleanImg === "N/A" || cleanImg === "FALSE" || cleanImg.length < 10) {
+        return false;
+    }
+    return true;
+};
+
 // Elements
 const loadingOverlay = document.getElementById('loading-overlay');
 const navbar = document.getElementById('navbar');
@@ -345,9 +355,11 @@ function createCardHTML(business) {
     const highlightClass = isSpaCeylon ? 'highlight-spa-ceylon' : '';
 
     let logoHTML = '';
-    // Run newlogo through bulletproof CDN bypass parser
-    const logoSrc = parseGoogleDriveImage(business.newlogo);
-    if (logoSrc) {
+    // Use the ruthless validator
+    const rawLogo = business.newlogo || business.logo;
+    const logoSrc = parseGoogleDriveImage(rawLogo);
+    
+    if (hasValidImage(business)) {
         logoHTML = `<div class="card-logo-container"><img src="${logoSrc}" alt="${business.name} logo" class="card-logo" loading="lazy" decoding="async" style="object-fit: contain;" /></div>`;
     } else {
         const initial = business.name ? business.name.charAt(0).toUpperCase() : '?';
@@ -376,60 +388,35 @@ function getGlassClass(biz) {
     return 'glass-card-gold'; // Fallback
 }
 
-// Render Featured Layer into three themed grids
+// Render Featured Layer into a single consolidated grid
 function renderFeatured() {
-    // 1. Filter arrays exactly by the new feature flags
-    const spaCeylonBrands = appData.businesses.filter(b => {
+    const featuredBrands = appData.businesses.filter(b => {
         if (!b || !b.featured) return false;
-        return String(b.featured).trim().toUpperCase() === 'TRUE-S';
+        const f = String(b.featured).trim().toUpperCase();
+        return f === 'TRUE' || f === 'TRUE-S' || f === 'TRUE-L' || f === 'TRUE-J';
     });
 
-    const luvEsenceBrands = appData.businesses.filter(b => {
-        if (!b || !b.featured) return false;
-        return String(b.featured).trim().toUpperCase() === 'TRUE-L';
-    });
+    const gridElem = document.getElementById('featured-grid');
+    if (!gridElem) return;
 
-    const janetBrands = appData.businesses.filter(b => {
-        if (!b || !b.featured) return false;
-        return String(b.featured).trim().toUpperCase() === 'TRUE-J';
-    });
-
-    // Determine if the whole section should be hidden
-    const totalFeatured = spaCeylonBrands.length + luvEsenceBrands.length + janetBrands.length;
-    if (totalFeatured === 0) {
+    if (featuredBrands.length === 0) {
         const featuredSection = document.getElementById('featured');
         if (featuredSection) featuredSection.style.display = 'none';
         return;
     }
 
-    // Helper to render a specific grid
-    const renderGrid = (gridId, brands) => {
-        const gridElem = document.getElementById(gridId);
-        if (!gridElem) return;
-        
-        // Hide wrapper if no brands in this bucket
-        if (brands.length === 0) {
-            gridElem.parentElement.parentElement.style.display = 'none';
-            return;
+    let html = '';
+    featuredBrands.forEach((biz, index) => {
+        let cardHtml = createCardHTML(biz);
+
+        // Interaction hint logic
+        if (index === 0 && localStorage.getItem('sawCardHint') !== 'true') {
+            cardHtml = cardHtml.replace('<div class="card-header">', '<div class="interaction-hint-popup" id="click-hint">Click me!</div><div class="card-header">');
         }
-        
-        let html = '';
-        brands.slice(0, 5).forEach((biz, index) => {
-            let cardHtml = createCardHTML(biz);
 
-            // Interaction hint logic from before
-            if (index === 0 && gridId === 'featured-spa-grid' && localStorage.getItem('sawCardHint') !== 'true') {
-                cardHtml = cardHtml.replace('<div class="card-header">', '<div class="interaction-hint-popup" id="click-hint">Click me!</div><div class="card-header">');
-            }
-
-            html += cardHtml;
-        });
-        gridElem.innerHTML = html;
-    };
-
-    renderGrid('featured-spa-grid', spaCeylonBrands);
-    renderGrid('featured-luv-grid', luvEsenceBrands);
-    renderGrid('featured-janet-grid', janetBrands);
+        html += cardHtml;
+    });
+    gridElem.innerHTML = html;
 }
 
 // Render Categories
@@ -469,12 +456,14 @@ function renderCategories() {
 }
 
 function createCategoryBlock(title, items) {
-    // Sort: businesses with a valid image float to the top;
-    // empty / null / "N/A" logos are pushed to the bottom.
+    // Apply the strict sort
     const sorted = [...items].sort((a, b) => {
-        const hasA = (a.newlogo && a.newlogo.trim() !== '' && a.newlogo.trim().toLowerCase() !== 'n/a') ? 1 : 0;
-        const hasB = (b.newlogo && b.newlogo.trim() !== '' && b.newlogo.trim().toLowerCase() !== 'n/a') ? 1 : 0;
-        return hasB - hasA;
+        const aImage = hasValidImage(a) ? 1 : 0;
+        const bImage = hasValidImage(b) ? 1 : 0;
+        if (bImage !== aImage) {
+            return bImage - aImage; // 1s (images) float to top, 0s (no images) sink to bottom
+        }
+        return String(a.name || "").localeCompare(String(b.name || "")); // Alphabetical fallback
     });
 
     let cardsHtml = '';
@@ -485,7 +474,7 @@ function createCategoryBlock(title, items) {
     return `
         <div class="category-block">
             <div class="category-header" onclick="toggleCategory(this)">
-                <h3 class="category-title">${title} <span style="font-size: 1rem; color: var(--color-text-muted); font-weight: 400; font-family: var(--font-body)">(${items.length})</span></h3>
+                <h3 class="category-title">${title}</h3>
                 <div class="category-icon">
                     <i data-feather="chevron-down"></i>
                 </div>

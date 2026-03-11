@@ -99,31 +99,32 @@
         </section>
 
         <section class="featured-section reveal-section" id="featured">
-                <div class="featured-list-wrapper theme-spa" style="margin-bottom: 40px;">
-                    <h3 class="glass-section-title">Spa Ceylon's Picks</h3>
-                    <div class="featured-scroll-container" style="overflow: visible;">
-                        <div class="featured-grid" id="featured-spa-grid">
-                            <!-- Featured cards will be injected here via JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <div class="featured-list-wrapper theme-luv" style="margin-bottom: 40px;">
-                    <h3 class="glass-section-title">LuvEsence's Picks</h3>
-                    <div class="featured-scroll-container" style="overflow: visible;">
-                        <div class="featured-grid" id="featured-luv-grid">
-                            <!-- Featured cards will be injected here via JS -->
-                        </div>
-                    </div>
-                </div>
-
-                <div class="featured-list-wrapper theme-janet">
-                    <h3 class="glass-section-title">Janet's Picks</h3>
-                    <div class="featured-scroll-container" style="overflow: visible;">
-                        <div class="featured-grid" id="featured-janet-grid">
-                            <!-- Featured cards will be injected here via JS -->
-                        </div>
-                    </div>
+            <div class="section-container">
+                <style>
+                    /* Force gold theme for all cards in featured section */
+                    #featured .brand-card-unified {
+                        background: rgba(198, 167, 94, 0.1) !important;
+                        border: 1px solid rgba(198, 167, 94, 0.4) !important;
+                        border-top: 3px solid #c6a75e !important;
+                        box-shadow: 0 8px 32px 0 rgba(198, 167, 94, 0.15) !important;
+                        backdrop-filter: blur(12px);
+                        -webkit-backdrop-filter: blur(12px);
+                        border-radius: 16px !important;
+                    }
+                    #featured .brand-card-unified .card-title {
+                        color: #000000 !important;
+                        opacity: 1 !important;
+                        visibility: visible !important;
+                    }
+                    #featured .brand-card-unified {
+                        opacity: 1 !important;
+                        visibility: visible !important;
+                        transform: none !important;
+                    }
+                </style>
+                <h2 class="section-title text-center" style="display: block; text-align: center; width: 100%;">Featured Brands</h2>
+                <div class="featured-grid" id="featured-grid">
+                    <!-- Featured cards will be injected here via JS -->
                 </div>
             </div>
         </section>

@@ -1047,16 +1047,26 @@ img[alt="LuvEsence"]:active {
 
 .featured-grid {
     display: flex;
-    flex-wrap: wrap; /* CRITICAL: Enables wrapping */
+    flex-direction: column; /* Mobile first: vertical stack */
     gap: 16px;
     padding: 20px 1rem;
     width: 100%;
-    overflow: visible;
     margin: 0 auto;
-    align-items: center; /* Center vertically if different heights */
-    justify-content: center; /* PERFECT CENTERING */
+    align-items: center;
+    justify-content: center;
     min-height: 280px;
-    /* Reserve space during API fetch to prevent CLS */
+}
+
+@media (min-width: 769px) {
+    .featured-grid {
+        display: grid !important;
+        grid-template-columns: repeat(5, 1fr) !important;
+        grid-auto-rows: 1fr;
+        flex-direction: row;
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
 }
 
 @media (max-width: 768px) {
@@ -1067,14 +1077,18 @@ img[alt="LuvEsence"]:active {
 }
 
 .featured-grid .card {
-    width: auto;
+    width: 100%;
     max-width: none;
-    flex: 1 1 0;
-    /* Ensures 5 columns distribute space equally on desktop */
+    flex: 1 1 100%; /* Mobile width */
     min-width: 0;
     position: relative;
     z-index: 30;
-    /* Ensures card + popup paints above section heading */
+}
+
+@media (min-width: 769px) {
+    .featured-grid .card {
+        flex: none; /* Reset for grid */
+    }
 }
 
 /* --- Glassmorphism Featured Showcase --- */
